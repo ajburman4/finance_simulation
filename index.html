@@ -1,0 +1,1715 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finance Simulation</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <style>
+    :root {
+      --bg: #f7f8f4;
+      --surface: #ffffff;
+      --surface-strong: #f0f3ea;
+      --ink: #17201b;
+      --muted: #66736b;
+      --line: #dfe6db;
+      --accent: #147c72;
+      --accent-strong: #0b5f57;
+      --blue: #396fa8;
+      --gold: #c88722;
+      --coral: #c95f44;
+      --green: #2f8f62;
+      --danger: #b4443d;
+      --shadow: 0 22px 60px rgba(23, 32, 27, 0.1);
+      --radius: 8px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      line-height: 1.5;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .app-frame {
+      max-width: 1440px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid rgba(23, 32, 27, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 32px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: #ffffff;
+      background: var(--accent);
+      border-radius: 8px;
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      max-width: 760px;
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    .button:hover {
+      border-color: rgba(20, 124, 114, 0.35);
+      color: var(--accent-strong);
+    }
+
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .button.primary:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+      color: #ffffff;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+
+    .tab-button {
+      min-height: 54px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .tab-button:last-child {
+      border-right: 0;
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: inset 0 -3px 0 var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 28px 32px 34px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.85fr) minmax(520px, 1.6fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .section-copy {
+      margin: 0;
+      color: var(--muted);
+      max-width: 860px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius);
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-header h2,
+    .panel-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .panel-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .tab-button:focus-visible,
+    .button:focus-visible {
+      outline: 3px solid rgba(20, 124, 114, 0.18);
+      outline-offset: 2px;
+    }
+
+    .input-note {
+      margin-top: 16px;
+      padding: 13px 14px;
+      border: 1px solid rgba(200, 135, 34, 0.32);
+      border-radius: 7px;
+      background: rgba(200, 135, 34, 0.08);
+      color: #5f481f;
+      font-size: 0.88rem;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .metric-card {
+      min-height: 124px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-card span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .metric-card strong {
+      display: block;
+      margin-top: 12px;
+      font-size: clamp(1.25rem, 2vw, 1.9rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .metric-card small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(360px, 0.9fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .chart-panel {
+      min-height: 380px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    .chart-panel h3 {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 310px;
+    }
+
+    .chart-fallback {
+      display: none;
+      height: 310px;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .goal-module {
+      display: grid;
+      gap: 18px;
+    }
+
+    .goal-ring {
+      --progress: 0deg;
+      width: min(220px, 80vw);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) var(--progress), #e8eee4 0deg);
+      display: grid;
+      place-items: center;
+    }
+
+    .goal-ring-inner {
+      width: 72%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      border: 1px solid var(--line);
+    }
+
+    .goal-ring-inner strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .goal-ring-inner span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 7px;
+      background: rgba(20, 124, 114, 0.1);
+      color: var(--accent-strong);
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .status-pill.close {
+      background: rgba(200, 135, 34, 0.14);
+      color: #87601c;
+    }
+
+    .status-pill.behind {
+      background: rgba(180, 68, 61, 0.1);
+      color: var(--danger);
+    }
+
+    .projection-layout {
+      display: grid;
+      gap: 22px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      background: #ffffff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+      font-size: 0.88rem;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-strong);
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .scenario-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .scenario-toggle {
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .scenario-toggle[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .summary-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .summary-copy {
+      font-size: 1.02rem;
+      color: #334139;
+    }
+
+    .summary-copy p {
+      margin: 0 0 16px;
+    }
+
+    .assumption-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .assumption-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .assumption-list strong {
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .validation {
+      display: none;
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(180, 68, 61, 0.24);
+      border-radius: 7px;
+      background: rgba(180, 68, 61, 0.08);
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .validation.active {
+      display: block;
+    }
+
+    .disclaimer {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 38px 20px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .empty-state.active {
+      display: block;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-grid,
+      .chart-grid,
+      .summary-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        padding: 0;
+      }
+
+      .app-frame {
+        border: 0;
+        box-shadow: none;
+      }
+
+      .topbar {
+        flex-direction: column;
+        padding: 22px 18px;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tab-panel {
+        padding: 22px 18px 28px;
+      }
+
+      .form-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-panel {
+        min-height: 340px;
+      }
+
+      .chart-wrap,
+      .chart-fallback {
+        height: 260px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .app-shell,
+      .app-frame,
+      .tab-panel {
+        padding: 0;
+        box-shadow: none;
+        border: 0;
+      }
+
+      .topbar,
+      .tabs,
+      .top-actions,
+      .projection-layout,
+      .dashboard-grid,
+      .scenario-toolbar,
+      #inputs-panel,
+      #projection-panel,
+      #scenarios-panel {
+        display: none !important;
+      }
+
+      #summary-panel {
+        display: block !important;
+      }
+
+      .summary-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        border: 0;
+      }
+
+      .panel-header,
+      .panel-body {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <div class="app-frame">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 17.5 9.2 12l3.3 3.3L20 7.5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 7.5h2v2" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>Finance Simulation</h1>
+            <p>Model savings, compound growth, inflation, fees, and portfolio assumptions for a clearer advisor-client conversation.</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="button" id="reset-button" type="button">Reset inputs</button>
+          <button class="button primary" id="print-button" type="button">Print summary</button>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="Simulation tabs">
+        <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="inputs-panel" data-tab="inputs">Inputs</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="projection-panel" data-tab="projection">Projection</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="scenarios-panel" data-tab="scenarios">Scenario Comparison</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="summary-panel" data-tab="summary">Client Summary</button>
+      </nav>
+
+      <section class="tab-panel active" id="inputs-panel" role="tabpanel">
+        <div id="validation-message" class="validation" role="alert"></div>
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Client inputs</h2>
+              <p>Use current dollars for balances and monthly savings. Assumptions save in this browser.</p>
+            </div>
+            <div class="panel-body">
+              <form id="input-form" class="form-grid">
+                <div class="field">
+                  <label for="currentAge">Current age</label>
+                  <input id="currentAge" name="currentAge" type="number" min="18" max="100" step="1" inputmode="numeric">
+                </div>
+                <div class="field">
+                  <label for="retirementAge">Retirement age</label>
+                  <input id="retirementAge" name="retirementAge" type="number" min="19" max="110" step="1" inputmode="numeric">
+                </div>
+                <div class="field">
+                  <label for="currentSavings">Current savings</label>
+                  <input id="currentSavings" name="currentSavings" type="number" min="0" step="1000" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="monthlyContribution">Monthly contribution</label>
+                  <input id="monthlyContribution" name="monthlyContribution" type="number" min="0" step="50" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="annualContributionIncrease">Annual contribution increase (%)</label>
+                  <input id="annualContributionIncrease" name="annualContributionIncrease" type="number" min="0" max="20" step="0.1" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="employerMatch">Employer match/month</label>
+                  <input id="employerMatch" name="employerMatch" type="number" min="0" step="25" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="portfolioModel">Portfolio model</label>
+                  <select id="portfolioModel" name="portfolioModel"></select>
+                </div>
+                <div class="field">
+                  <label for="inflationRate">Inflation rate (%)</label>
+                  <input id="inflationRate" name="inflationRate" type="number" min="0" max="20" step="0.1" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="annualFeeRate">Annual fee rate (%)</label>
+                  <input id="annualFeeRate" name="annualFeeRate" type="number" min="0" max="5" step="0.01" inputmode="decimal">
+                </div>
+                <div class="field">
+                  <label for="retirementGoalBalance">Retirement goal balance</label>
+                  <input id="retirementGoalBalance" name="retirementGoalBalance" type="number" min="0" step="10000" inputmode="decimal">
+                </div>
+              </form>
+              <div class="input-note">
+                Portfolio volatility is shown as an assumption for conversation context. V1 uses deterministic projections only.
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="section-title">Current path at a glance</h2>
+            <p class="section-copy">These metrics update as inputs change and compare the inflation-adjusted ending balance to the goal in today's dollars.</p>
+            <div class="metric-grid">
+              <article class="metric-card">
+                <span>Ending balance</span>
+                <strong data-metric="endingBalance">$0</strong>
+                <small>Projected at retirement</small>
+              </article>
+              <article class="metric-card">
+                <span>Inflation-adjusted</span>
+                <strong data-metric="realEndingBalance">$0</strong>
+                <small>Today's purchasing power</small>
+              </article>
+              <article class="metric-card">
+                <span>Goal gap/surplus</span>
+                <strong data-metric="goalGap">$0</strong>
+                <small>Compared with goal</small>
+              </article>
+              <article class="metric-card">
+                <span>Fees paid</span>
+                <strong data-metric="feesPaid">$0</strong>
+                <small>Total estimated drag</small>
+              </article>
+            </div>
+            <div class="chart-panel">
+              <h3>Goal progress</h3>
+              <div class="goal-module">
+                <div class="goal-ring" id="goal-ring">
+                  <div class="goal-ring-inner">
+                    <strong id="goal-percent">0%</strong>
+                    <span>of goal</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="status-pill" id="track-status">On track</span>
+                  <p class="section-copy" id="goal-message" style="margin-top: 10px;"></p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="projection-panel" role="tabpanel">
+        <div class="projection-layout">
+          <div>
+            <h2 class="section-title">Projection</h2>
+            <p class="section-copy">Monthly calculations are summarized annually so the long-term path is easy to explain.</p>
+          </div>
+          <div id="projection-empty" class="empty-state">Enter a retirement age greater than current age to calculate projections.</div>
+          <div id="projection-content">
+            <div class="metric-grid">
+              <article class="metric-card">
+                <span>Client contributions</span>
+                <strong data-metric="clientContributions">$0</strong>
+                <small>Out of pocket</small>
+              </article>
+              <article class="metric-card">
+                <span>Employer match</span>
+                <strong data-metric="employerMatchTotal">$0</strong>
+                <small>Added by employer</small>
+              </article>
+              <article class="metric-card">
+                <span>Investment growth</span>
+                <strong data-metric="investmentGrowth">$0</strong>
+                <small>Net of fee drag</small>
+              </article>
+              <article class="metric-card">
+                <span>Portfolio model</span>
+                <strong data-metric="portfolioLabel">Balanced Growth</strong>
+                <small data-metric="portfolioAssumptions">7.0% return / 13.0% volatility</small>
+              </article>
+            </div>
+            <div class="chart-grid">
+              <section class="chart-panel">
+                <h3>Portfolio balance over time</h3>
+                <div class="chart-wrap"><canvas id="balance-chart"></canvas></div>
+                <div class="chart-fallback" data-fallback="balance">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
+              </section>
+              <section class="chart-panel">
+                <h3>Ending value components</h3>
+                <div class="chart-wrap"><canvas id="component-chart"></canvas></div>
+                <div class="chart-fallback" data-fallback="component">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
+              </section>
+            </div>
+            <section class="panel" style="margin-top: 22px;">
+              <div class="panel-header">
+                <h3>Annual results</h3>
+                <p>Nominal and inflation-adjusted balances are shown at each year end.</p>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Age</th>
+                      <th>Year</th>
+                      <th>Balance</th>
+                      <th>Inflation-adjusted</th>
+                      <th>Client contributions</th>
+                      <th>Employer match</th>
+                      <th>Fees paid</th>
+                    </tr>
+                  </thead>
+                  <tbody id="annual-results-body"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="scenarios-panel" role="tabpanel">
+        <div>
+          <h2 class="section-title">Scenario comparison</h2>
+          <p class="section-copy">Compare the baseline path with practical adjustments an advisor may discuss during a meeting.</p>
+        </div>
+        <div class="scenario-toolbar" id="scenario-toolbar" aria-label="Scenario selection"></div>
+        <div id="scenario-empty" class="empty-state">Enter a retirement age greater than current age to compare scenarios.</div>
+        <div id="scenario-content">
+          <section class="chart-panel">
+            <h3>Projected balances by scenario</h3>
+            <div class="chart-wrap"><canvas id="scenario-chart"></canvas></div>
+            <div class="chart-fallback" data-fallback="scenario">Charts are unavailable because Chart.js did not load. Scenario metrics still work.</div>
+          </section>
+          <section class="panel" style="margin-top: 22px;">
+            <div class="panel-header">
+              <h3>Scenario outcomes</h3>
+              <p>Differences are measured against the baseline inflation-adjusted ending balance.</p>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Scenario</th>
+                    <th>Ending balance</th>
+                    <th>Inflation-adjusted</th>
+                    <th>Goal gap/surplus</th>
+                    <th>Difference from baseline</th>
+                  </tr>
+                </thead>
+                <tbody id="scenario-results-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="summary-panel" role="tabpanel">
+        <div class="summary-layout">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Client summary</h2>
+              <p>Plain-English language for a printout or advisor follow-up.</p>
+            </div>
+            <div class="panel-body summary-copy" id="summary-copy"></div>
+          </section>
+          <aside class="panel">
+            <div class="panel-header">
+              <h3>Assumptions</h3>
+              <p>These are illustrative inputs, not a recommendation.</p>
+            </div>
+            <div class="panel-body">
+              <ul class="assumption-list" id="assumption-list"></ul>
+            </div>
+          </aside>
+        </div>
+        <div class="disclaimer">
+          This tool is for financial education and planning conversations only. It does not provide personalized financial, investment, tax, or legal advice, and projections are not guarantees of future results.
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const STORAGE_KEY = "financeSimulationInputs.v1";
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const portfolioModels = {
+        conservative: { label: "Conservative", annualReturn: 0.04, volatility: 0.05 },
+        moderate: { label: "Moderate", annualReturn: 0.055, volatility: 0.09 },
+        balancedGrowth: { label: "Balanced Growth", annualReturn: 0.07, volatility: 0.13 },
+        aggressive: { label: "Aggressive", annualReturn: 0.085, volatility: 0.18 }
+      };
+
+      const modelOrder = ["conservative", "moderate", "balancedGrowth", "aggressive"];
+
+      const defaults = {
+        currentAge: 38,
+        retirementAge: 67,
+        currentSavings: 185000,
+        monthlyContribution: 1400,
+        annualContributionIncrease: 3,
+        employerMatch: 450,
+        portfolioModel: "balancedGrowth",
+        inflationRate: 2.5,
+        annualFeeRate: 0.75,
+        retirementGoalBalance: 1800000
+      };
+
+      const scenarioPresets = [
+        { id: "baseline", label: "Baseline", apply: inputs => ({ ...inputs }) },
+        { id: "saveMore", label: "Save more", apply: inputs => ({ ...inputs, monthlyContribution: inputs.monthlyContribution * 1.2 }) },
+        { id: "retireLater", label: "Retire later", apply: inputs => ({ ...inputs, retirementAge: inputs.retirementAge + 3 }) },
+        { id: "moreConservative", label: "More conservative portfolio", apply: inputs => shiftPortfolio(inputs, -1) },
+        { id: "moreAggressive", label: "More aggressive portfolio", apply: inputs => shiftPortfolio(inputs, 1) },
+        { id: "lowerFees", label: "Lower fees", apply: inputs => ({ ...inputs, annualFeeRate: Math.max(0.05, inputs.annualFeeRate - 0.5) }) }
+      ];
+
+      const state = {
+        inputs: loadInputs(),
+        selectedScenarios: new Set(scenarioPresets.map(scenario => scenario.id)),
+        projection: null,
+        scenarios: [],
+        charts: {
+          balance: null,
+          component: null,
+          scenario: null
+        }
+      };
+
+      const els = {
+        form: document.getElementById("input-form"),
+        portfolioModel: document.getElementById("portfolioModel"),
+        validation: document.getElementById("validation-message"),
+        tabButtons: Array.from(document.querySelectorAll(".tab-button")),
+        tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
+        metricValues: Array.from(document.querySelectorAll("[data-metric]")),
+        goalRing: document.getElementById("goal-ring"),
+        goalPercent: document.getElementById("goal-percent"),
+        goalMessage: document.getElementById("goal-message"),
+        trackStatus: document.getElementById("track-status"),
+        annualBody: document.getElementById("annual-results-body"),
+        scenarioToolbar: document.getElementById("scenario-toolbar"),
+        scenarioBody: document.getElementById("scenario-results-body"),
+        summaryCopy: document.getElementById("summary-copy"),
+        assumptionList: document.getElementById("assumption-list"),
+        projectionEmpty: document.getElementById("projection-empty"),
+        projectionContent: document.getElementById("projection-content"),
+        scenarioEmpty: document.getElementById("scenario-empty"),
+        scenarioContent: document.getElementById("scenario-content"),
+        resetButton: document.getElementById("reset-button"),
+        printButton: document.getElementById("print-button")
+      };
+
+      init();
+
+      function init() {
+        populatePortfolioSelect();
+        populateInputs();
+        buildScenarioToolbar();
+        bindEvents();
+        recalculate();
+        activateTab(getInitialTab());
+
+        // Expose calculation helpers for browser-console QA without adding test UI.
+        window.runSelfTests = runSelfTests;
+        window.financeSimulation = {
+          calculateProjection,
+          buildScenarios,
+          portfolioModels,
+          defaults
+        };
+      }
+
+      function populatePortfolioSelect() {
+        els.portfolioModel.innerHTML = modelOrder.map(key => {
+          const model = portfolioModels[key];
+          return `<option value="${key}">${model.label}</option>`;
+        }).join("");
+      }
+
+      function populateInputs() {
+        Object.entries(state.inputs).forEach(([key, value]) => {
+          const input = els.form.elements[key];
+          if (input) input.value = value;
+        });
+      }
+
+      function bindEvents() {
+        els.form.addEventListener("input", () => {
+          state.inputs = readInputs();
+          saveInputs(state.inputs);
+          recalculate();
+        });
+
+        els.form.addEventListener("change", () => {
+          state.inputs = readInputs();
+          saveInputs(state.inputs);
+          recalculate();
+        });
+
+        els.tabButtons.forEach(button => {
+          button.addEventListener("click", () => activateTab(button.dataset.tab));
+        });
+
+        els.resetButton.addEventListener("click", () => {
+          state.inputs = { ...defaults };
+          saveInputs(state.inputs);
+          populateInputs();
+          recalculate();
+        });
+
+        els.printButton.addEventListener("click", () => {
+          activateTab("summary");
+          window.print();
+        });
+
+        window.addEventListener("load", () => {
+          if (!window.Chart) showChartFallbacks();
+          recalculate();
+          activateTab(getInitialTab());
+        });
+
+        window.addEventListener("hashchange", () => activateTab(getInitialTab()));
+      }
+
+      function activateTab(tabId) {
+        els.tabButtons.forEach(button => {
+          const active = button.dataset.tab === tabId;
+          button.setAttribute("aria-selected", String(active));
+        });
+
+        els.tabPanels.forEach(panel => {
+          panel.classList.toggle("active", panel.id === `${tabId}-panel`);
+        });
+
+        // Chart.js needs a resize nudge after hidden tab panels become visible.
+        requestAnimationFrame(() => {
+          Object.values(state.charts).forEach(chart => {
+            if (chart) chart.resize();
+          });
+        });
+      }
+
+      function getInitialTab() {
+        const tab = (window.location && window.location.hash ? window.location.hash : "").replace("#", "");
+        return ["inputs", "projection", "scenarios", "summary"].includes(tab) ? tab : "inputs";
+      }
+
+      function loadInputs() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          return sanitizeInputs({ ...defaults, ...saved });
+        } catch (error) {
+          return { ...defaults };
+        }
+      }
+
+      function saveInputs(inputs) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
+      }
+
+      function readInputs() {
+        const data = {};
+        Object.keys(defaults).forEach(key => {
+          const input = els.form.elements[key];
+          if (!input) return;
+          data[key] = input.tagName === "SELECT" ? input.value : Number(input.value);
+        });
+        return sanitizeInputs(data);
+      }
+
+      function sanitizeInputs(inputs) {
+        return {
+          currentAge: clampNumber(inputs.currentAge, 18, 100, defaults.currentAge),
+          retirementAge: clampNumber(inputs.retirementAge, 18, 110, defaults.retirementAge),
+          currentSavings: clampNumber(inputs.currentSavings, 0, 100000000, defaults.currentSavings),
+          monthlyContribution: clampNumber(inputs.monthlyContribution, 0, 1000000, defaults.monthlyContribution),
+          annualContributionIncrease: clampNumber(inputs.annualContributionIncrease, 0, 20, defaults.annualContributionIncrease),
+          employerMatch: clampNumber(inputs.employerMatch, 0, 1000000, defaults.employerMatch),
+          portfolioModel: portfolioModels[inputs.portfolioModel] ? inputs.portfolioModel : defaults.portfolioModel,
+          inflationRate: clampNumber(inputs.inflationRate, 0, 20, defaults.inflationRate),
+          annualFeeRate: clampNumber(inputs.annualFeeRate, 0, 5, defaults.annualFeeRate),
+          retirementGoalBalance: clampNumber(inputs.retirementGoalBalance, 0, 100000000, defaults.retirementGoalBalance)
+        };
+      }
+
+      function clampNumber(value, min, max, fallback) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return fallback;
+        return Math.min(max, Math.max(min, numeric));
+      }
+
+      function validateInputs(inputs) {
+        const errors = [];
+        if (inputs.retirementAge <= inputs.currentAge) {
+          errors.push("Retirement age must be greater than current age.");
+        }
+        return errors;
+      }
+
+      function recalculate() {
+        const validationErrors = validateInputs(state.inputs);
+        setValidation(validationErrors);
+
+        if (validationErrors.length) {
+          state.projection = null;
+          state.scenarios = [];
+          renderInvalidState();
+          return;
+        }
+
+        state.projection = calculateProjection(state.inputs);
+        state.scenarios = buildScenarios(state.inputs).filter(scenario => state.selectedScenarios.has(scenario.id));
+        renderAll();
+      }
+
+      function setValidation(errors) {
+        els.validation.textContent = errors.join(" ");
+        els.validation.classList.toggle("active", errors.length > 0);
+      }
+
+      function renderInvalidState() {
+        els.projectionEmpty.classList.add("active");
+        els.projectionContent.style.display = "none";
+        els.scenarioEmpty.classList.add("active");
+        els.scenarioContent.style.display = "none";
+        els.summaryCopy.innerHTML = "<p>Update the retirement age so it is greater than the current age, then the client summary will refresh.</p>";
+        els.assumptionList.innerHTML = "";
+        updateMetricText({});
+      }
+
+      function renderAll() {
+        els.projectionEmpty.classList.remove("active");
+        els.projectionContent.style.display = "";
+        els.scenarioEmpty.classList.remove("active");
+        els.scenarioContent.style.display = "";
+        updateMetricText(buildMetricMap(state.projection, state.inputs));
+        renderGoalProgress(state.projection);
+        renderAnnualTable(state.projection);
+        renderScenarioTable(state.scenarios);
+        renderSummary(state.inputs, state.projection, state.scenarios);
+        renderCharts();
+      }
+
+      function calculateProjection(inputs) {
+        const model = portfolioModels[inputs.portfolioModel];
+        const months = Math.round((inputs.retirementAge - inputs.currentAge) * 12);
+        const annualIncreaseRate = inputs.annualContributionIncrease / 100;
+
+        // Convert annual assumptions to monthly rates so compounding is applied
+        // at the same cadence as contributions and fees.
+        const monthlyReturn = Math.pow(1 + model.annualReturn, 1 / 12) - 1;
+        const monthlyInflation = Math.pow(1 + inputs.inflationRate / 100, 1 / 12) - 1;
+        const monthlyFee = Math.pow(1 + inputs.annualFeeRate / 100, 1 / 12) - 1;
+
+        let balance = inputs.currentSavings;
+        let contribution = inputs.monthlyContribution;
+        let cumulativeInflation = 1;
+        let totalClientContributions = 0;
+        let totalEmployerMatch = 0;
+        let totalFeesPaid = 0;
+
+        const monthlyRows = [];
+        const annualRows = [];
+
+        for (let month = 1; month <= months; month += 1) {
+          if (month > 1 && (month - 1) % 12 === 0) {
+            contribution *= 1 + annualIncreaseRate;
+          }
+
+          const startingBalance = balance;
+          const returnAmount = balance * monthlyReturn;
+          balance += returnAmount;
+
+          const feePaid = balance * monthlyFee;
+          balance -= feePaid;
+          balance += contribution + inputs.employerMatch;
+
+          cumulativeInflation *= 1 + monthlyInflation;
+          totalClientContributions += contribution;
+          totalEmployerMatch += inputs.employerMatch;
+          totalFeesPaid += feePaid;
+
+          const row = {
+            month,
+            year: Math.ceil(month / 12),
+            age: inputs.currentAge + month / 12,
+            startingBalance,
+            contribution,
+            employerMatch: inputs.employerMatch,
+            returnAmount,
+            feePaid,
+            balance,
+            realBalance: balance / cumulativeInflation,
+            cumulativeInflation,
+            totalClientContributions,
+            totalEmployerMatch,
+            totalFeesPaid
+          };
+
+          monthlyRows.push(row);
+
+          if (month % 12 === 0) {
+            annualRows.push({
+              ...row,
+              age: inputs.currentAge + month / 12
+            });
+          }
+        }
+
+        const ending = monthlyRows[monthlyRows.length - 1];
+        const endingBalance = ending ? ending.balance : inputs.currentSavings;
+        const realEndingBalance = ending ? ending.realBalance : inputs.currentSavings;
+        const investmentGrowth = endingBalance - inputs.currentSavings - totalClientContributions - totalEmployerMatch;
+        const goalGap = realEndingBalance - inputs.retirementGoalBalance;
+        const goalProgress = inputs.retirementGoalBalance > 0 ? realEndingBalance / inputs.retirementGoalBalance : 1;
+
+        return {
+          inputs,
+          model,
+          months,
+          monthlyRows,
+          annualRows,
+          endingBalance,
+          realEndingBalance,
+          totalClientContributions,
+          totalEmployerMatch,
+          investmentGrowth,
+          totalFeesPaid,
+          goalGap,
+          goalProgress,
+          trackStatus: getTrackStatus(goalProgress)
+        };
+      }
+
+      function getTrackStatus(progress) {
+        if (progress >= 1) return { key: "on-track", label: "On track" };
+        if (progress >= 0.85) return { key: "close", label: "Close" };
+        return { key: "behind", label: "Behind" };
+      }
+
+      function shiftPortfolio(inputs, direction) {
+        const index = modelOrder.indexOf(inputs.portfolioModel);
+        const nextIndex = Math.min(modelOrder.length - 1, Math.max(0, index + direction));
+        return { ...inputs, portfolioModel: modelOrder[nextIndex] };
+      }
+
+      function buildScenarios(inputs) {
+        const baselineProjection = calculateProjection(inputs);
+        return scenarioPresets.map(preset => {
+          const scenarioInputs = preset.apply(inputs);
+          const projection = preset.id === "baseline" ? baselineProjection : calculateProjection(scenarioInputs);
+          return {
+            id: preset.id,
+            label: preset.label,
+            inputs: scenarioInputs,
+            projection,
+            differenceFromBaseline: projection.realEndingBalance - baselineProjection.realEndingBalance
+          };
+        });
+      }
+
+      function buildMetricMap(projection, inputs) {
+        if (!projection) return {};
+        const model = portfolioModels[inputs.portfolioModel];
+        return {
+          endingBalance: formatCurrency(projection.endingBalance),
+          realEndingBalance: formatCurrency(projection.realEndingBalance),
+          goalGap: formatSignedCurrency(projection.goalGap),
+          feesPaid: formatCurrency(projection.totalFeesPaid),
+          clientContributions: formatCurrency(projection.totalClientContributions),
+          employerMatchTotal: formatCurrency(projection.totalEmployerMatch),
+          investmentGrowth: formatCurrency(projection.investmentGrowth),
+          portfolioLabel: model.label,
+          portfolioAssumptions: `${formatPercent(model.annualReturn)} return / ${formatPercent(model.volatility)} volatility`
+        };
+      }
+
+      function updateMetricText(metricMap) {
+        els.metricValues.forEach(el => {
+          const value = metricMap[el.dataset.metric] || (el.tagName === "SMALL" ? "" : "$0");
+          setAnimatedText(el, value);
+        });
+      }
+
+      function setAnimatedText(el, nextText) {
+        if (el.textContent === nextText) return;
+        if (reducedMotion) {
+          el.textContent = nextText;
+          return;
+        }
+        el.style.opacity = "0";
+        window.setTimeout(() => {
+          el.textContent = nextText;
+          el.style.opacity = "1";
+        }, 90);
+      }
+
+      function renderGoalProgress(projection) {
+        const percent = Math.round(Math.min(999, Math.max(0, projection.goalProgress * 100)));
+        const degrees = Math.min(360, Math.max(0, projection.goalProgress * 360));
+        els.goalRing.style.setProperty("--progress", `${degrees}deg`);
+        els.goalPercent.textContent = `${percent}%`;
+        els.trackStatus.textContent = projection.trackStatus.label;
+        els.trackStatus.className = `status-pill ${projection.trackStatus.key === "close" ? "close" : ""} ${projection.trackStatus.key === "behind" ? "behind" : ""}`.trim();
+        els.goalMessage.textContent = projection.goalGap >= 0
+          ? `Projected purchasing power is ${formatCurrency(projection.goalGap)} above the goal.`
+          : `Projected purchasing power is ${formatCurrency(Math.abs(projection.goalGap))} below the goal.`;
+      }
+
+      function renderAnnualTable(projection) {
+        els.annualBody.innerHTML = projection.annualRows.map(row => `
+          <tr>
+            <td>${formatAge(row.age)}</td>
+            <td>${row.year}</td>
+            <td>${formatCurrency(row.balance)}</td>
+            <td>${formatCurrency(row.realBalance)}</td>
+            <td>${formatCurrency(row.totalClientContributions)}</td>
+            <td>${formatCurrency(row.totalEmployerMatch)}</td>
+            <td>${formatCurrency(row.totalFeesPaid)}</td>
+          </tr>
+        `).join("");
+      }
+
+      function buildScenarioToolbar() {
+        els.scenarioToolbar.innerHTML = scenarioPresets.map(scenario => `
+          <button class="scenario-toggle" type="button" aria-pressed="true" data-scenario="${scenario.id}">
+            ${scenario.label}
+          </button>
+        `).join("");
+
+        els.scenarioToolbar.addEventListener("click", event => {
+          const button = event.target.closest("[data-scenario]");
+          if (!button) return;
+          const id = button.dataset.scenario;
+
+          if (id === "baseline") return;
+
+          if (state.selectedScenarios.has(id)) {
+            state.selectedScenarios.delete(id);
+          } else {
+            state.selectedScenarios.add(id);
+          }
+
+          button.setAttribute("aria-pressed", String(state.selectedScenarios.has(id)));
+          recalculate();
+        });
+      }
+
+      function renderScenarioTable(scenarios) {
+        els.scenarioBody.innerHTML = scenarios.map(scenario => {
+          const projection = scenario.projection;
+          return `
+            <tr>
+              <td>${scenario.label}</td>
+              <td>${formatCurrency(projection.endingBalance)}</td>
+              <td>${formatCurrency(projection.realEndingBalance)}</td>
+              <td>${formatSignedCurrency(projection.goalGap)}</td>
+              <td>${scenario.id === "baseline" ? "Baseline" : formatSignedCurrency(scenario.differenceFromBaseline)}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function renderSummary(inputs, projection, scenarios) {
+        const bestScenario = scenarios
+          .filter(scenario => scenario.id !== "baseline")
+          .sort((a, b) => b.differenceFromBaseline - a.differenceFromBaseline)[0];
+
+        const trackSentence = projection.trackStatus.key === "on-track"
+          ? "The current path is on track relative to the stated retirement goal."
+          : projection.trackStatus.key === "close"
+            ? "The current path is close to the stated retirement goal, but there is still a meaningful gap to review."
+            : "The current path is behind the stated retirement goal and may need higher savings, more time, lower fees, or a different risk profile.";
+
+        const gapSentence = projection.goalGap >= 0
+          ? `At retirement, the projection shows about ${formatCurrency(projection.realEndingBalance)} in today's dollars, which is ${formatCurrency(projection.goalGap)} above the goal.`
+          : `At retirement, the projection shows about ${formatCurrency(projection.realEndingBalance)} in today's dollars, which is ${formatCurrency(Math.abs(projection.goalGap))} below the goal.`;
+
+        const improvementSentence = bestScenario && bestScenario.differenceFromBaseline > 0
+          ? `Among the preset scenarios, the highest-impact improvement is "${bestScenario.label}", adding about ${formatCurrency(bestScenario.differenceFromBaseline)} of inflation-adjusted value versus the baseline.`
+          : "None of the selected preset scenarios improves the inflation-adjusted ending balance versus the baseline.";
+
+        els.summaryCopy.innerHTML = `
+          <p><strong>${projection.trackStatus.label}.</strong> ${trackSentence}</p>
+          <p>${gapSentence}</p>
+          <p>The ending nominal balance is projected at ${formatCurrency(projection.endingBalance)}. This includes ${formatCurrency(projection.totalClientContributions)} of client contributions, ${formatCurrency(projection.totalEmployerMatch)} of employer match, and ${formatCurrency(projection.investmentGrowth)} of net investment growth, after an estimated ${formatCurrency(projection.totalFeesPaid)} in fees.</p>
+          <p>${improvementSentence}</p>
+        `;
+
+        const model = portfolioModels[inputs.portfolioModel];
+        const assumptions = [
+          ["Current age", formatAge(inputs.currentAge)],
+          ["Retirement age", formatAge(inputs.retirementAge)],
+          ["Portfolio model", model.label],
+          ["Expected return", formatPercent(model.annualReturn)],
+          ["Volatility assumption", formatPercent(model.volatility)],
+          ["Inflation rate", formatPercent(inputs.inflationRate / 100)],
+          ["Annual fee rate", formatPercent(inputs.annualFeeRate / 100)],
+          ["Retirement goal", formatCurrency(inputs.retirementGoalBalance)]
+        ];
+
+        els.assumptionList.innerHTML = assumptions.map(([label, value]) => `
+          <li><span>${label}</span><strong>${value}</strong></li>
+        `).join("");
+      }
+
+      function renderCharts() {
+        if (!window.Chart) {
+          showChartFallbacks();
+          return;
+        }
+        hideChartFallbacks();
+        renderBalanceChart();
+        renderComponentChart();
+        renderScenarioChart();
+      }
+
+      function renderBalanceChart() {
+        const rows = state.projection.annualRows;
+        const labels = rows.map(row => formatAge(row.age));
+        const datasets = [
+          {
+            label: "Portfolio balance",
+            data: rows.map(row => Math.round(row.balance)),
+            borderColor: "#147c72",
+            backgroundColor: "rgba(20, 124, 114, 0.12)",
+            fill: true,
+            tension: 0.32,
+            pointRadius: 2
+          },
+          {
+            label: "Inflation-adjusted balance",
+            data: rows.map(row => Math.round(row.realBalance)),
+            borderColor: "#396fa8",
+            backgroundColor: "rgba(57, 111, 168, 0.08)",
+            fill: false,
+            tension: 0.32,
+            pointRadius: 2
+          }
+        ];
+        state.charts.balance = upsertChart("balance-chart", state.charts.balance, "line", labels, datasets, {
+          plugins: { legend: { position: "bottom" } },
+          scales: moneyScales()
+        });
+      }
+
+      function renderComponentChart() {
+        const rows = state.projection.annualRows;
+        const labels = rows.map(row => formatAge(row.age));
+        const datasets = [
+          {
+            label: "Client contributions",
+            data: rows.map(row => Math.round(row.totalClientContributions)),
+            backgroundColor: "#396fa8"
+          },
+          {
+            label: "Employer match",
+            data: rows.map(row => Math.round(row.totalEmployerMatch)),
+            backgroundColor: "#c88722"
+          },
+          {
+            label: "Investment growth",
+            data: rows.map(row => Math.round(Math.max(0, row.balance - state.inputs.currentSavings - row.totalClientContributions - row.totalEmployerMatch))),
+            backgroundColor: "#147c72"
+          }
+        ];
+        state.charts.component = upsertChart("component-chart", state.charts.component, "bar", labels, datasets, {
+          plugins: { legend: { position: "bottom" } },
+          scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: {
+              stacked: true,
+              ticks: { callback: value => compactCurrency(value) },
+              grid: { color: "rgba(102, 115, 107, 0.16)" }
+            }
+          }
+        });
+      }
+
+      function renderScenarioChart() {
+        const colors = ["#17201b", "#147c72", "#396fa8", "#c88722", "#c95f44", "#2f8f62"];
+        const longest = state.scenarios.reduce((max, scenario) => Math.max(max, scenario.projection.annualRows.length), 0);
+        const labels = Array.from({ length: longest }, (_, index) => `Year ${index + 1}`);
+        const datasets = state.scenarios.map((scenario, index) => ({
+          label: scenario.label,
+          data: scenario.projection.annualRows.map(row => Math.round(row.realBalance)),
+          borderColor: colors[index % colors.length],
+          backgroundColor: colors[index % colors.length],
+          tension: 0.28,
+          pointRadius: 1.5
+        }));
+        state.charts.scenario = upsertChart("scenario-chart", state.charts.scenario, "line", labels, datasets, {
+          plugins: { legend: { position: "bottom" } },
+          scales: moneyScales()
+        });
+      }
+
+      function upsertChart(canvasId, existingChart, type, labels, datasets, options) {
+        const ctx = document.getElementById(canvasId);
+        const { plugins = {}, ...chartOptions } = options;
+        const config = {
+          type,
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: reducedMotion ? false : { duration: 650, easing: "easeOutQuart" },
+            interaction: { intersect: false, mode: "index" },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`
+                }
+              },
+              ...plugins
+            },
+            ...chartOptions
+          }
+        };
+
+        if (existingChart) {
+          existingChart.config.type = type;
+          existingChart.data.labels = labels;
+          existingChart.data.datasets = datasets;
+          existingChart.options = config.options;
+          existingChart.update();
+          return existingChart;
+        }
+
+        return new Chart(ctx, config);
+      }
+
+      function moneyScales() {
+        return {
+          x: { grid: { display: false } },
+          y: {
+            ticks: { callback: value => compactCurrency(value) },
+            grid: { color: "rgba(102, 115, 107, 0.16)" }
+          }
+        };
+      }
+
+      function showChartFallbacks() {
+        document.querySelectorAll("canvas").forEach(canvas => {
+          canvas.parentElement.style.display = "none";
+        });
+        document.querySelectorAll(".chart-fallback").forEach(fallback => {
+          fallback.style.display = "flex";
+        });
+      }
+
+      function hideChartFallbacks() {
+        document.querySelectorAll("canvas").forEach(canvas => {
+          canvas.parentElement.style.display = "";
+        });
+        document.querySelectorAll(".chart-fallback").forEach(fallback => {
+          fallback.style.display = "none";
+        });
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0
+        }).format(Math.round(Number(value) || 0));
+      }
+
+      function compactCurrency(value) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          notation: "compact",
+          maximumFractionDigits: 1
+        }).format(Number(value) || 0);
+      }
+
+      function formatSignedCurrency(value) {
+        const numeric = Math.round(Number(value) || 0);
+        if (numeric === 0) return "$0";
+        return `${numeric > 0 ? "+" : "-"}${formatCurrency(Math.abs(numeric))}`;
+      }
+
+      function formatPercent(value) {
+        return `${(Number(value) * 100).toFixed(1)}%`;
+      }
+
+      function formatAge(value) {
+        return Number.isInteger(value) ? String(value) : value.toFixed(1);
+      }
+
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+      }
+
+      function nearlyEqual(actual, expected, tolerance = 0.01) {
+        return Math.abs(actual - expected) <= tolerance;
+      }
+
+      function runSelfTests() {
+        const zeroModelInputs = {
+          ...defaults,
+          currentAge: 40,
+          retirementAge: 41,
+          currentSavings: 10000,
+          monthlyContribution: 1000,
+          annualContributionIncrease: 0,
+          employerMatch: 100,
+          portfolioModel: "conservative",
+          inflationRate: 0,
+          annualFeeRate: 0,
+          retirementGoalBalance: 0
+        };
+        const originalConservative = portfolioModels.conservative;
+        portfolioModels.conservative = { ...originalConservative, annualReturn: 0, volatility: 0.05 };
+        const zeroProjection = calculateProjection(zeroModelInputs);
+        assert(nearlyEqual(zeroProjection.endingBalance, 23200), "Zero return/fee/inflation should equal savings plus contributions and match.");
+        assert(nearlyEqual(zeroProjection.realEndingBalance, zeroProjection.endingBalance), "Zero inflation should keep real and nominal balance equal.");
+        portfolioModels.conservative = originalConservative;
+
+        const inflationProjection = calculateProjection({ ...zeroModelInputs, inflationRate: 3 });
+        assert(inflationProjection.realEndingBalance < inflationProjection.endingBalance, "Positive inflation should lower real balance.");
+
+        const noFeeProjection = calculateProjection({ ...defaults, annualFeeRate: 0 });
+        const feeProjection = calculateProjection({ ...defaults, annualFeeRate: 1 });
+        assert(feeProjection.endingBalance < noFeeProjection.endingBalance, "Fees should reduce ending balance.");
+        assert(feeProjection.totalFeesPaid > 0, "Fees should accumulate in fees paid.");
+
+        const increaseProjection = calculateProjection({
+          ...defaults,
+          currentAge: 40,
+          retirementAge: 42,
+          monthlyContribution: 100,
+          annualContributionIncrease: 10,
+          employerMatch: 0,
+          annualFeeRate: 0,
+          inflationRate: 0
+        });
+        assert(nearlyEqual(increaseProjection.monthlyRows[11].contribution, 100), "Annual increase should not apply before month 13.");
+        assert(nearlyEqual(increaseProjection.monthlyRows[12].contribution, 110), "Annual increase should start at month 13.");
+
+        const scenarioInputs = { ...defaults, portfolioModel: "moderate", annualFeeRate: 0.75 };
+        const scenarios = buildScenarios(scenarioInputs);
+        assert(scenarios.find(s => s.id === "saveMore").inputs.monthlyContribution === scenarioInputs.monthlyContribution * 1.2, "Save more should only increase monthly contribution.");
+        assert(scenarios.find(s => s.id === "retireLater").inputs.retirementAge === scenarioInputs.retirementAge + 3, "Retire later should add three years.");
+        assert(scenarios.find(s => s.id === "moreConservative").inputs.portfolioModel === "conservative", "More conservative should shift one model lower.");
+        assert(scenarios.find(s => s.id === "moreAggressive").inputs.portfolioModel === "balancedGrowth", "More aggressive should shift one model higher.");
+        assert(nearlyEqual(scenarios.find(s => s.id === "lowerFees").inputs.annualFeeRate, 0.25), "Lower fees should reduce fee rate by 0.50 points.");
+
+        assert(validateInputs({ ...defaults, currentAge: 67, retirementAge: 67 }).length === 1, "Retirement age at or below current age should be invalid.");
+
+        console.log("All finance simulation self-tests passed.");
+        return true;
+      }
+    }());
+  </script>
+</body>
+</html>

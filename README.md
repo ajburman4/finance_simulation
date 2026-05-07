@@ -37,11 +37,12 @@ The experience should be visual, interactive, and educational. It should make fi
 
 ## Repository Structure
 
-Planned structure as the app takes shape:
+Current structure:
 
 ```text
 .
 |-- README.md
+|-- index.html
 |-- docs/
 |   `-- product-brief.md
 |-- .github/
@@ -65,7 +66,14 @@ This project is for financial education and simulation only. It should not provi
 
 ## Getting Started
 
-No app framework has been selected yet. The next step is to define the initial product workflow and design direction, then choose the implementation stack that best supports interactive charts, animation, and simulation logic.
+V1 is a self-contained static app.
+
+1. Open `index.html` in a modern browser.
+2. Adjust the inputs in the Inputs tab.
+3. Review the Projection, Scenario Comparison, and Client Summary tabs.
+4. Use the browser console to run `runSelfTests()` for calculation smoke tests.
+
+No install step, backend, or build process is required. Charts use Chart.js from a CDN; if the CDN is unavailable, the app still renders metrics, tables, and a chart-unavailable message.
 
 ## Development Notes
 

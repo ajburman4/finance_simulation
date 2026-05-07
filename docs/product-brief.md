@@ -22,9 +22,17 @@ Finance Simulation is an interactive planning and education app for financial ad
 
 - Fixed return projection for simple education.
 - Portfolio-model projection with expected return and volatility assumptions.
-- Benchmark comparison against cash, inflation, or selected market proxies.
-- Scenario table showing ending balance, total contributions, investment growth, and estimated purchasing power.
-- Optional uncertainty bands or Monte Carlo ranges for advanced views.
+- Scenario comparison against practical planning adjustments.
+- Scenario table showing ending balance, total contributions, investment growth, fees paid, and estimated purchasing power.
+- Optional uncertainty bands or Monte Carlo ranges for a future advanced view.
+
+## V1 App Shape
+
+- Single-file `index.html` app with embedded CSS and JavaScript.
+- No backend, build step, authentication, market-data API, or account persistence.
+- Local browser state stores the current inputs.
+- Chart.js is loaded by CDN for animated charts, with a fallback message if unavailable.
+- Client Summary is designed to print cleanly for advisor follow-up.
 
 ## Design Questions
 
@@ -49,4 +57,3 @@ Finance Simulation is an interactive planning and education app for financial ad
 - Live trading, transaction execution, or recommendation engines.
 - Production-grade tax optimization.
 - User authentication or persistence until the initial app workflow is defined.
-
