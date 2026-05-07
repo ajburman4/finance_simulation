@@ -1,0 +1,59 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors and local workspace files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+vendor/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+coverage/
+storybook-static/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test and cache artifacts
+.cache/
+.parcel-cache/
+.turbo/
+.vite/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# Generated reports and local data exports
+reports/
+exports/
+*.sqlite
+*.sqlite3
+*.db
+
