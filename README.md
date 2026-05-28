@@ -1,8 +1,8 @@
-# Finance Simulation
+# FuturePath Finance Simulation
 
-An interactive financial advising simulation app for helping people understand how savings, investing, compound interest, portfolio assumptions, benchmarks, and planning choices can change long-term outcomes.
+An interactive financial advising simulation app for helping people understand how accumulation, distribution, bucket-based drawdowns, and small planning changes can affect long-term outcomes.
 
-This repository is intentionally starting with product and collaboration scaffolding before locking in the application stack. The goal is to create enough structure to support design exploration, technical planning, and implementation without committing too early to a framework.
+V1 is a self-contained static app in `index.html`. It is designed for advisor-client conversations, with plain-language summaries, editable assumptions, and visuals that make financial tradeoffs easier to inspect.
 
 ## Product Direction
 
@@ -13,18 +13,26 @@ The app should help users explore questions like:
 - How do conservative, balanced, growth, and custom portfolio assumptions compare?
 - How do projected outcomes compare against benchmarks or inflation?
 - What tradeoffs appear when I adjust contribution rates, retirement age, fees, withdrawals, taxes, or risk assumptions?
+- In retirement distribution, how sensitive is the income plan to spending, inflation, and return assumptions?
 
 The experience should be visual, interactive, and educational. It should make financial concepts easier to inspect without presenting projections as guarantees.
 
-## Early Feature Ideas
+## Current Features
 
-- Customizable inputs for starting balance, contributions, time horizon, expected return, volatility, fees, inflation, and tax assumptions.
-- Animated savings and investment growth over time.
-- Scenario comparisons for different contribution strategies and portfolio models.
-- Benchmark overlays such as cash savings, inflation-adjusted value, broad-market indexes, or target-date style allocations.
+- Accumulation projection with savings, contribution, fee, inflation, and portfolio model assumptions.
+- Scenario comparisons for contribution strategy, retirement age, portfolio risk, and fees.
+- Distribution mode for retirement income planning across taxable, retirement, and Roth assets.
+- Three-bucket drawdown model with annual withdrawals, growth, refill logic, and year-by-year allocation details.
+- Sensitivity sandbox for distribution planning that lets users adjust spending, inflation, and returns.
+- Change breakdown that shows each sandbox slider's individual cushion and coverage impact, plus the combined result.
+- Printable summaries for advisor-client conversations.
+
+## Future Feature Ideas
+
 - Monte Carlo or range-based simulations to show uncertainty instead of only a single expected line.
-- Milestone callouts for savings goals, retirement readiness, drawdown periods, and risk events.
-- Exportable summaries for advisor-client conversations.
+- Benchmark overlays such as cash savings, inflation-adjusted value, broad-market indexes, or target-date style allocations.
+- Additional tax, account-ordering, and withdrawal strategy assumptions.
+- Exportable PDF or document summaries.
 
 ## Design Principles
 
@@ -68,9 +76,9 @@ This project is for financial education and simulation only. It should not provi
 
 V1 is a self-contained static app.
 
-1. Open `index.html` in a modern browser.
-2. Adjust the inputs in the Inputs tab.
-3. Review the Projection, Scenario Comparison, and Client Summary tabs.
+1. Open `index.html` in a modern browser, or run a local static server and visit the local URL.
+2. Use the Accumulation or Distribution mode tabs.
+3. Adjust the inputs, then scroll through projection, scenario, sensitivity, and summary sections.
 4. Use the browser console to run `runSelfTests()` for calculation smoke tests.
 
 No install step, backend, or build process is required. Charts use Chart.js from a CDN; if the CDN is unavailable, the app still renders metrics, tables, and a chart-unavailable message.
