@@ -1521,15 +1521,19 @@
       min-width: 0;
     }
 
-    .distribution-portfolio-panel {
+    .distribution-visual-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .distribution-stack-panel {
+      min-height: 430px;
       background:
-        linear-gradient(135deg, rgba(85, 230, 193, 0.08), rgba(122, 183, 255, 0.09) 48%, rgba(246, 199, 102, 0.07)),
+        linear-gradient(135deg, rgba(246, 199, 102, 0.09), rgba(85, 230, 193, 0.07) 52%, rgba(122, 183, 255, 0.1)),
         rgba(255, 255, 255, 0.04);
     }
 
-    .distribution-portfolio-panel .chart-wrap {
-      height: 352px;
-      padding: 8px 4px 0;
+    .distribution-stack-panel .chart-wrap {
+      height: 364px;
     }
 
     .chart-fallback {
@@ -1570,6 +1574,153 @@
       display: block;
       margin-top: 10px;
       font-size: 1.18rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-method {
+      margin: 12px 4px 0;
+      color: rgba(216, 239, 232, 0.64);
+      font-size: 0.78rem;
+      font-weight: 760;
+      line-height: 1.45;
+    }
+
+    .annual-story-list {
+      display: grid;
+      gap: 11px;
+      max-height: 620px;
+      overflow: auto;
+      padding: 18px;
+      scrollbar-color: rgba(85, 230, 193, 0.72) rgba(255, 255, 255, 0.06);
+    }
+
+    .annual-story-row {
+      --progress-width: 0%;
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr) minmax(138px, auto);
+      gap: 14px;
+      align-items: center;
+      min-height: 88px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .annual-story-age {
+      display: grid;
+      gap: 3px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .annual-story-age strong {
+      color: var(--ink);
+      font-size: 1.34rem;
+      line-height: 1;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .annual-story-main {
+      min-width: 0;
+      display: grid;
+      gap: 9px;
+    }
+
+    .annual-story-main strong {
+      color: var(--ink);
+      font-size: clamp(1rem, 1.6vw, 1.34rem);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .annual-story-main span {
+      color: rgba(216, 239, 232, 0.7);
+      font-size: 0.78rem;
+      font-weight: 760;
+      line-height: 1.45;
+    }
+
+    .annual-progress-track {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .annual-progress-track i {
+      display: block;
+      width: var(--progress-width);
+      min-width: var(--progress-min, 0);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--lime));
+    }
+
+    .annual-decomposition {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .annual-stack {
+      display: flex;
+      height: 13px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .annual-stack i {
+      width: var(--share, 0%);
+      min-width: var(--share-min, 0);
+      background: var(--source-color, var(--teal));
+    }
+
+    .annual-components {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .annual-components span {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+      color: rgba(216, 239, 232, 0.58);
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .annual-components strong {
+      color: var(--ink);
+      font-size: 0.82rem;
+      line-height: 1.1;
+      letter-spacing: 0;
+      text-transform: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .annual-story-side {
+      display: grid;
+      gap: 6px;
+      min-width: 138px;
+      color: rgba(216, 239, 232, 0.62);
+      font-size: 0.72rem;
+      font-weight: 850;
+      text-align: right;
+    }
+
+    .annual-story-side strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.88rem;
       font-variant-numeric: tabular-nums;
     }
 
@@ -2953,15 +3104,21 @@
       .form-grid,
       .metric-grid,
       .data-strip,
+      .annual-components,
       .tranche-strip,
       .goal-visual,
       .runway-stats,
-      .bridge-row {
+      .bridge-row,
+      .annual-story-row {
         grid-template-columns: 1fr;
       }
 
       .bridge-note {
         grid-column: auto;
+      }
+
+      .annual-story-side {
+        text-align: left;
       }
 
       .bridge-value {
@@ -3104,7 +3261,7 @@
       <div class="hero-inner">
         <div class="hero-copy reveal in-view">
           <h1 id="hero-title">Make the future feel <span>inspectable.</span></h1>
-          <p>A live financial simulator for turning age, savings, fees, inflation, risk, and client what-ifs into one scrollable story.</p>
+          <p>A live financial simulator for turning age, savings, inflation, risk, and client what-ifs into one scrollable story.</p>
           <div class="hero-actions">
             <a class="button primary" href="#inputs">
               Start the simulation
@@ -3133,7 +3290,7 @@
               <div class="sparkline" id="hero-sparkline"></div>
               <div class="future-meta">
                 <div><span>Goal delta</span><strong data-metric="goalGap">$0</strong></div>
-                <div><span>Fees</span><strong data-metric="feesPaid">$0</strong></div>
+                <div><span>Today's dollars</span><strong data-metric="realEndingBalance">$0</strong></div>
               </div>
             </article>
           </div>
@@ -3148,7 +3305,7 @@
         <div class="section-number">01</div>
         <div>
           <h2 id="inputs-title">Set the scene.</h2>
-          <p>Every number is a story variable. Change the starting point, savings rhythm, match, fees, or assumptions and the rest of the page reacts in real time.</p>
+          <p>Every number is a story variable. Change the starting point, savings rhythm, match, inflation, or assumptions and the rest of the page reacts in real time.</p>
         </div>
       </div>
 
@@ -3216,9 +3373,9 @@
               <small>Projected at retirement</small>
             </article>
             <article class="metric-card">
-              <span>Inflation-adjusted</span>
-              <strong data-metric="realEndingBalance">$0</strong>
-              <small>Today's purchasing power</small>
+              <span>Starting savings</span>
+              <strong data-metric="startingSavings">$0</strong>
+              <small>Already invested</small>
             </article>
             <article class="metric-card">
               <span>Goal gap/surplus</span>
@@ -3226,9 +3383,9 @@
               <small>Compared with goal</small>
             </article>
             <article class="metric-card">
-              <span>Fees paid</span>
-              <strong data-metric="feesPaid">$0</strong>
-              <small>Total estimated drag</small>
+              <span>Ongoing savings</span>
+              <strong data-metric="ongoingSavings">$0</strong>
+              <small>Client plus workplace contributions</small>
             </article>
           </div>
 
@@ -3254,7 +3411,7 @@
         <div class="section-number">02</div>
         <div>
           <h2 id="projection-title">Watch compounding gather speed.</h2>
-          <p>The line is nominal growth. The quieter line is purchasing power. The gap between them is where inflation, fees, and time become visible.</p>
+          <p>The main path shows the expected balance. The shaded band gives clients a plain-English sense of how market variance could widen the outcome.</p>
         </div>
       </div>
 
@@ -3262,19 +3419,19 @@
       <div id="projection-content" class="projection-layout">
         <div class="metric-grid reveal">
           <article class="metric-card">
-            <span>Client contributions</span>
-            <strong data-metric="clientContributions">$0</strong>
-            <small>Out of pocket</small>
+            <span>Starting savings</span>
+            <strong data-metric="startingSavings">$0</strong>
+            <small>Balance today</small>
           </article>
           <article class="metric-card">
-            <span>Employer match</span>
-            <strong data-metric="employerMatchTotal">$0</strong>
-            <small>Added by employer</small>
+            <span>Ongoing savings</span>
+            <strong data-metric="ongoingSavings">$0</strong>
+            <small>Client plus workplace additions</small>
           </article>
           <article class="metric-card">
             <span>Investment growth</span>
             <strong data-metric="investmentGrowth">$0</strong>
-            <small>Net of fee drag</small>
+            <small>Compounding after plan costs</small>
           </article>
           <article class="metric-card">
             <span>Portfolio model</span>
@@ -3285,8 +3442,9 @@
 
         <div class="chart-grid reveal">
           <section class="chart-panel">
-            <h3>Portfolio balance over time <span>Nominal vs real</span></h3>
+            <h3>Portfolio balance over time <span>Planning range</span></h3>
             <div class="chart-wrap"><canvas id="balance-chart"></canvas></div>
+            <p class="chart-method" id="balance-range-method"></p>
             <div class="chart-fallback" data-fallback="balance">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
           </section>
           <section class="chart-panel">
@@ -3294,34 +3452,19 @@
             <div class="chart-wrap"><canvas id="component-chart"></canvas></div>
             <div class="chart-fallback" data-fallback="component">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
             <div class="data-strip">
+              <div><span>Starting</span><strong data-metric="startingSavings">$0</strong></div>
+              <div><span>Ongoing savings</span><strong data-metric="ongoingSavings">$0</strong></div>
               <div><span>Growth</span><strong data-metric="investmentGrowth">$0</strong></div>
-              <div><span>Contributions</span><strong data-metric="clientContributions">$0</strong></div>
-              <div><span>Fees</span><strong data-metric="feesPaid">$0</strong></div>
             </div>
           </section>
         </div>
 
         <section class="panel reveal">
           <div class="panel-header">
-            <h3>Annual results</h3>
-            <p>Nominal and inflation-adjusted balances are shown at each year end.</p>
+            <h3>Year-by-year story map</h3>
+            <p>Each row translates the forecast into age, balance, goal progress, and what changed that year.</p>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Age</th>
-                  <th>Year</th>
-                  <th>Balance</th>
-                  <th>Inflation-adjusted</th>
-                  <th>Client contributions</th>
-                  <th>Employer match</th>
-                  <th>Fees paid</th>
-                </tr>
-              </thead>
-              <tbody id="annual-results-body"></tbody>
-            </table>
-          </div>
+          <div class="annual-story-list" id="annual-results-body" aria-label="Annual projection story map"></div>
         </section>
       </div>
     </section>
@@ -3331,39 +3474,63 @@
         <div class="section-number">03</div>
         <div>
           <h2 id="scenarios-title">Pull one lever. See the story bend.</h2>
-          <p>Scenario toggles keep the conversation practical: save more, add time, shift risk, or reduce fees, then compare each outcome against baseline purchasing power.</p>
+          <p>Move one lever at a time, or combine them, to show how saving more, adding time, or changing return assumptions bends the plan.</p>
         </div>
       </div>
 
-      <div class="scenario-toolbar reveal" id="scenario-toolbar" aria-label="Scenario selection"></div>
       <div id="scenario-empty" class="empty-state">Enter a retirement age greater than current age to compare scenarios.</div>
       <div id="scenario-content" class="scenario-layout">
+        <div class="sensitivity-layout reveal">
+          <section class="panel sensitivity-sandbox">
+            <div class="panel-header sensitivity-header">
+              <div>
+                <h3>Sensitivity sandbox</h3>
+                <p>Adjust the active levers and compare the result against the current baseline.</p>
+              </div>
+              <button class="button subtle-button" type="button" id="accumulation-sensitivity-reset">Reset</button>
+            </div>
+            <div class="panel-body">
+              <div class="sensitivity-outcome" id="accumulation-sensitivity-outcome" aria-live="polite"></div>
+              <div class="sensitivity-controls" id="accumulation-sensitivity-controls">
+                <label class="sensitivity-control" for="accumulationSensitivitySavings">
+                  <span>Monthly savings</span>
+                  <strong id="accumulationSensitivitySavingsValue">No change</strong>
+                  <input id="accumulationSensitivitySavings" type="range" min="-20" max="30" step="5" value="0" data-accumulation-sensitivity="savings">
+                  <small>Higher monthly savings adds fuel every month; lower savings slows the compounding base.</small>
+                </label>
+                <label class="sensitivity-control" for="accumulationSensitivityYears">
+                  <span>Retirement age</span>
+                  <strong id="accumulationSensitivityYearsValue">No change</strong>
+                  <input id="accumulationSensitivityYears" type="range" min="-2" max="5" step="1" value="0" data-accumulation-sensitivity="years">
+                  <small>Adding years gives contributions and growth more time to work.</small>
+                </label>
+                <label class="sensitivity-control" for="accumulationSensitivityReturns">
+                  <span>Investment returns</span>
+                  <strong id="accumulationSensitivityReturnsValue">No change</strong>
+                  <input id="accumulationSensitivityReturns" type="range" min="-2" max="2" step="0.25" value="0" data-accumulation-sensitivity="returns">
+                  <small>Return changes show how sensitive the plan is to market assumptions.</small>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel risk-ladder-panel">
+            <div class="panel-header">
+              <h3>Lever impact</h3>
+              <p>Each row isolates one slider, then shows the combined result.</p>
+            </div>
+            <div class="panel-body">
+              <ol class="risk-ladder" id="accumulation-risk-ladder"></ol>
+            </div>
+          </section>
+        </div>
+
         <section class="chart-panel reveal">
-          <h3>Projected balances by scenario <span>Inflation-adjusted</span></h3>
+          <h3>Projected path under current levers <span>Baseline vs sandbox</span></h3>
           <div class="chart-wrap"><canvas id="scenario-chart"></canvas></div>
           <div class="chart-fallback" data-fallback="scenario">Charts are unavailable because Chart.js did not load. Scenario metrics still work.</div>
         </section>
 
-        <section class="panel reveal">
-          <div class="panel-header">
-            <h3>Scenario outcomes</h3>
-            <p>Differences are measured against the baseline inflation-adjusted ending balance.</p>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Scenario</th>
-                  <th>Ending balance</th>
-                  <th>Inflation-adjusted</th>
-                  <th>Goal gap/surplus</th>
-                  <th>Difference from baseline</th>
-                </tr>
-              </thead>
-              <tbody id="scenario-results-body"></tbody>
-            </table>
-          </div>
-        </section>
       </div>
     </section>
 
@@ -3568,11 +3735,11 @@
         <div id="distribution-content" class="projection-layout">
           <section class="panel portfolio-story reveal" id="distribution-drawdown-bridge" aria-label="Drawdown portfolio bridge"></section>
 
-          <div class="chart-grid reveal">
-            <section class="chart-panel distribution-portfolio-panel">
-              <h3>Bucket balances over time <span>Bucket 1 / Bucket 2 / Bucket 3</span></h3>
-              <div class="chart-wrap"><canvas id="distribution-portfolio-chart"></canvas></div>
-              <div class="chart-fallback" data-fallback="distribution-portfolio">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
+          <div class="chart-grid distribution-visual-grid reveal">
+            <section class="chart-panel distribution-stack-panel">
+              <h3>Bucket composition over time <span>Stacked balances</span></h3>
+              <div class="chart-wrap"><canvas id="distribution-portfolio-stack-chart"></canvas></div>
+              <div class="chart-fallback" data-fallback="distribution-portfolio-stack">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
             </section>
             <section class="chart-panel refill-cascade" id="distribution-refill-cascade" aria-label="Year-end bucket refill cascade"></section>
           </div>
@@ -3719,7 +3886,7 @@
         { id: "retireLater", label: "Retire later", apply: inputs => ({ ...inputs, retirementAge: inputs.retirementAge + 3 }) },
         { id: "moreConservative", label: "More conservative", apply: inputs => shiftPortfolio(inputs, -1) },
         { id: "moreAggressive", label: "More aggressive", apply: inputs => shiftPortfolio(inputs, 1) },
-        { id: "lowerFees", label: "Lower fees", apply: inputs => ({ ...inputs, annualFeeRate: Math.max(0.05, inputs.annualFeeRate - 0.5) }) }
+        { id: "lowerFees", label: "Lower costs", apply: inputs => ({ ...inputs, annualFeeRate: Math.max(0.05, inputs.annualFeeRate - 0.5) }) }
       ];
 
       const distributionBucketLabels = ["Bucket 1", "Bucket 2", "Bucket 3"];
@@ -3738,6 +3905,20 @@
         bucket3Return: 12
       };
 
+      const distributionControlIds = {
+        currentAge: "distributionCurrentAge",
+        planningEndAge: "distributionEndAge",
+        withdrawalAmount: "withdrawalAmount",
+        withdrawalCadence: "withdrawalCadence",
+        inflationRate: "distributionInflationRate",
+        taxableAssets: "taxableAssets",
+        retirementAssets: "retirementAssets",
+        rothAssets: "rothAssets",
+        bucket1Return: "distributionBucket1Return",
+        bucket2Return: "distributionBucket2Return",
+        bucket3Return: "distributionBucket3Return"
+      };
+
       const distributionScenarioPresets = [
         { id: "baseline", label: "Baseline", apply: inputs => ({ ...inputs }) },
         { id: "reduceSpending", label: "Reduce spending 10%", apply: inputs => ({ ...inputs, withdrawalAmount: inputs.withdrawalAmount * 0.9 }) },
@@ -3752,6 +3933,12 @@
         selectedScenarios: new Set(scenarioPresets.map(scenario => scenario.id)),
         projection: null,
         scenarios: [],
+        accumulationSensitivity: {
+          savings: 0,
+          years: 0,
+          returns: 0
+        },
+        accumulationSensitivityProjection: null,
         distributionInputs: loadDistributionInputs(),
         selectedDistributionScenarios: new Set(distributionScenarioPresets.map(scenario => scenario.id)),
         distributionSensitivity: {
@@ -3765,7 +3952,7 @@
           balance: null,
           component: null,
           scenario: null,
-          distributionPortfolio: null,
+          distributionPortfolioStack: null,
           distributionNeed: null,
           distributionScenario: null
         }
@@ -3788,8 +3975,17 @@
         headerMeterLabel: document.querySelector(".header-meter span"),
         headerMeterValue: document.querySelector(".header-meter strong[data-metric]"),
         annualBody: document.getElementById("annual-results-body"),
-        scenarioToolbar: document.getElementById("scenario-toolbar"),
         scenarioBody: document.getElementById("scenario-results-body"),
+        balanceRangeMethod: document.getElementById("balance-range-method"),
+        accumulationSensitivityReset: document.getElementById("accumulation-sensitivity-reset"),
+        accumulationSensitivityOutcome: document.getElementById("accumulation-sensitivity-outcome"),
+        accumulationSensitivityValues: {
+          savings: document.getElementById("accumulationSensitivitySavingsValue"),
+          years: document.getElementById("accumulationSensitivityYearsValue"),
+          returns: document.getElementById("accumulationSensitivityReturnsValue")
+        },
+        accumulationSensitivityInputs: Array.from(document.querySelectorAll("[data-accumulation-sensitivity]")),
+        accumulationRiskLadder: document.getElementById("accumulation-risk-ladder"),
         summaryCopy: document.getElementById("summary-copy"),
         assumptionList: document.getElementById("assumption-list"),
         projectionEmpty: document.getElementById("projection-empty"),
@@ -3850,6 +4046,7 @@
         populateInputs();
         populateDistributionInputs();
         buildScenarioToolbar();
+        setupAccumulationSensitivitySandbox();
         setupDistributionSensitivitySandbox();
         bindEvents();
         setupReveals();
@@ -3878,7 +4075,7 @@
 
       function populateDistributionInputs() {
         Object.entries(state.distributionInputs).forEach(([key, value]) => {
-          const input = els.distributionForm.elements[key];
+          const input = getDistributionControl(key);
           if (!input) return;
           input.value = value;
           formatDistributionField(input);
@@ -3898,23 +4095,12 @@
           recalculate();
         });
 
-        els.distributionForm.addEventListener("input", queueDistributionRefresh);
-        els.distributionForm.addEventListener("change", applyDistributionFormValues);
         els.distributionForm.addEventListener("submit", event => {
           event.preventDefault();
           applyDistributionFormValues();
         });
 
-        els.distributionForm.addEventListener("focusin", event => {
-          unformatDistributionField(event.target);
-        });
-
-        els.distributionForm.addEventListener("focusout", event => {
-          formatDistributionField(event.target);
-          applyDistributionFormValues();
-        });
-
-        els.distributionLinkedInputs.forEach(input => {
+        getDistributionInputControls().forEach(input => {
           input.addEventListener("input", queueDistributionRefresh);
           input.addEventListener("change", applyDistributionFormValues);
           input.addEventListener("focus", event => unformatDistributionField(event.target));
@@ -4217,11 +4403,23 @@
       function readDistributionInputs() {
         const data = {};
         Object.keys(distributionDefaults).forEach(key => {
-          const input = els.distributionForm.elements[key];
+          const input = getDistributionControl(key);
           if (!input) return;
           data[key] = input.tagName === "SELECT" ? input.value : parseFormattedNumber(input.value);
         });
         return sanitizeDistributionInputs(data);
+      }
+
+      function getDistributionControl(key) {
+        const id = distributionControlIds[key];
+        return (id ? document.getElementById(id) : null) || els.distributionForm.elements[key];
+      }
+
+      function getDistributionInputControls() {
+        const controls = Object.keys(distributionDefaults)
+          .map(getDistributionControl)
+          .filter(Boolean);
+        return Array.from(new Set(controls));
       }
 
       function sanitizeDistributionInputs(inputs) {
@@ -4301,9 +4499,10 @@
         setValidation(validationErrors);
 
         if (validationErrors.length) {
-          state.projection = null;
-          state.scenarios = [];
-          renderInvalidState();
+        state.projection = null;
+        state.scenarios = [];
+        state.accumulationSensitivityProjection = null;
+        renderInvalidState();
           updateHeaderForActiveTab();
           return;
         }
@@ -4348,6 +4547,8 @@
         els.scenarioContent.style.display = "none";
         els.summaryCopy.innerHTML = "<p>Update the retirement age so it is greater than the current age, then the client summary will refresh.</p>";
         els.assumptionList.innerHTML = "";
+        if (els.accumulationSensitivityOutcome) els.accumulationSensitivityOutcome.innerHTML = "";
+        if (els.accumulationRiskLadder) els.accumulationRiskLadder.innerHTML = "";
         updateMetricText({});
       }
 
@@ -4360,6 +4561,7 @@
         renderGoalProgress(state.projection);
         renderHeroSparkline(state.projection);
         renderAnnualTable(state.projection);
+        renderAccumulationSensitivity();
         renderScenarioTable(state.scenarios);
         renderSummary(state.inputs, state.projection, state.scenarios);
         renderCharts();
@@ -4405,7 +4607,8 @@
         const months = Math.round((inputs.retirementAge - inputs.currentAge) * 12);
         const annualIncreaseRate = inputs.annualContributionIncrease / 100;
 
-        const monthlyReturn = Math.pow(1 + model.annualReturn, 1 / 12) - 1;
+        const adjustedAnnualReturn = Math.max(-0.99, model.annualReturn + (Number(inputs.returnAdjustment) || 0));
+        const monthlyReturn = Math.pow(1 + adjustedAnnualReturn, 1 / 12) - 1;
         const monthlyInflation = Math.pow(1 + inputs.inflationRate / 100, 1 / 12) - 1;
         const monthlyFee = Math.pow(1 + inputs.annualFeeRate / 100, 1 / 12) - 1;
 
@@ -4514,6 +4717,16 @@
             differenceFromBaseline: projection.realEndingBalance - baselineProjection.realEndingBalance
           };
         });
+      }
+
+      function buildProjectionRange(inputs) {
+        const model = portfolioModels[inputs.portfolioModel];
+        const rangeOffset = Math.max(0.01, Math.min(0.035, model.volatility * 0.22));
+        return {
+          offset: rangeOffset,
+          lower: calculateProjection({ ...inputs, returnAdjustment: -rangeOffset }),
+          upper: calculateProjection({ ...inputs, returnAdjustment: rangeOffset })
+        };
       }
 
       function calculateDistributionProjection(inputs) {
@@ -4749,8 +4962,10 @@
           realEndingBalance: formatCurrency(projection.realEndingBalance),
           goalGap: formatSignedCurrency(projection.goalGap),
           feesPaid: formatCurrency(projection.totalFeesPaid),
+          startingSavings: formatCurrency(inputs.currentSavings),
           clientContributions: formatCurrency(projection.totalClientContributions),
           employerMatchTotal: formatCurrency(projection.totalEmployerMatch),
+          ongoingSavings: formatCurrency(projection.totalClientContributions + projection.totalEmployerMatch),
           investmentGrowth: formatCurrency(projection.investmentGrowth),
           portfolioLabel: model.label,
           portfolioAssumptions: `${formatPercent(model.annualReturn)} return / ${formatPercent(model.volatility)} volatility`
@@ -4869,17 +5084,48 @@
       }
 
       function renderAnnualTable(projection) {
-        els.annualBody.innerHTML = projection.annualRows.map(row => `
-          <tr>
-            <td>${formatAge(row.age)}</td>
-            <td>${row.year}</td>
-            <td>${formatCurrency(row.balance)}</td>
-            <td>${formatCurrency(row.realBalance)}</td>
-            <td>${formatCurrency(row.totalClientContributions)}</td>
-            <td>${formatCurrency(row.totalEmployerMatch)}</td>
-            <td>${formatCurrency(row.totalFeesPaid)}</td>
-          </tr>
-        `).join("");
+        const goal = Math.max(projection.inputs.retirementGoalBalance, 1);
+        els.annualBody.innerHTML = projection.annualRows.map(row => {
+          const priorRow = projection.annualRows[row.year - 2];
+          const addedSavings = row.contribution * 12 + row.employerMatch * 12;
+          const yearGrowth = priorRow
+            ? row.balance - priorRow.balance - addedSavings
+            : row.balance - projection.inputs.currentSavings - addedSavings;
+          const oldPrincipal = projection.inputs.currentSavings;
+          const newPrincipal = row.totalClientContributions + row.totalEmployerMatch;
+          const totalGrowth = row.balance - oldPrincipal - newPrincipal;
+          const stackTotal = Math.max(row.balance, oldPrincipal + newPrincipal + Math.max(0, totalGrowth), 1);
+          const oldShare = Math.max(0, (oldPrincipal / stackTotal) * 100);
+          const newShare = Math.max(0, (newPrincipal / stackTotal) * 100);
+          const growthShare = Math.max(0, (totalGrowth / stackTotal) * 100);
+          const progress = Math.max(0, Math.min(100, (row.realBalance / goal) * 100));
+          return `
+            <article class="annual-story-row" style="--progress-width:${progress}%; --progress-min:${progress > 0 ? "10px" : "0"}">
+              <div class="annual-story-age"><span>Age</span><strong>${formatAge(row.age)}</strong></div>
+              <div class="annual-story-main">
+                <strong>${formatCurrency(row.balance)} projected balance</strong>
+                <div class="annual-progress-track" aria-hidden="true"><i></i></div>
+                <span>${Math.round(progress)}% of the goal in today's dollars by year ${row.year}.</span>
+                <div class="annual-decomposition" aria-label="Balance decomposition">
+                  <div class="annual-stack" aria-hidden="true">
+                    <i style="--share:${oldShare}%; --share-min:${oldShare > 0 ? "4px" : "0"}; --source-color:var(--blue)"></i>
+                    <i style="--share:${newShare}%; --share-min:${newShare > 0 ? "4px" : "0"}; --source-color:var(--gold)"></i>
+                    <i style="--share:${growthShare}%; --share-min:${growthShare > 0 ? "4px" : "0"}; --source-color:var(--teal)"></i>
+                  </div>
+                  <div class="annual-components">
+                    <span>Old principal<strong>${formatCurrency(oldPrincipal)}</strong></span>
+                    <span>New principal<strong>${formatCurrency(newPrincipal)}</strong></span>
+                    <span>Growth<strong>${formatSignedCurrency(totalGrowth)}</strong></span>
+                  </div>
+                </div>
+              </div>
+              <div class="annual-story-side">
+                <span>Saved this year<strong>${formatCurrency(addedSavings)}</strong></span>
+                <span>Market change<strong>${formatSignedCurrency(yearGrowth)}</strong></span>
+              </div>
+            </article>
+          `;
+        }).join("");
       }
 
       function renderDistributionSparkline(projection) {
@@ -5006,12 +5252,12 @@
               <strong>${formatCurrency(projection.totalGap)}</strong>
             </div>
           </div>
-          <div class="portfolio-equation" aria-label="Starting assets less income paid plus growth equals ending assets">
+          <div class="portfolio-equation" aria-label="Starting assets plus projected growth less income paid equals ending assets">
             ${card("Starting assets", projection.startingAssets, "Client assets entered today", "var(--blue)")}
-            <div class="equation-operator minus">-</div>
-            ${card("Income paid", projection.totalFunded, `${formatCurrency(projection.totalNeed)} requested`, "var(--coral)")}
             <div class="equation-operator">+</div>
             ${card("Projected growth", projection.totalGrowth, "Broken out by bucket below", "var(--gold)", `<div class="bridge-breakout">${growthBreakout}</div>`)}
+            <div class="equation-operator minus">-</div>
+            ${card("Income paid", projection.totalFunded, `${formatCurrency(projection.totalNeed)} requested`, "var(--coral)")}
             <div class="equation-operator">=</div>
             ${card("Ending assets", projection.endingAssets, "After the final planned withdrawal", "var(--teal)")}
           </div>
@@ -5341,6 +5587,226 @@
         `;
       }
 
+      function setupAccumulationSensitivitySandbox() {
+        if (!els.accumulationSensitivityInputs.length || !els.accumulationSensitivityReset) return;
+        els.accumulationSensitivityInputs.forEach(input => {
+          const key = input.dataset.accumulationSensitivity;
+          input.value = state.accumulationSensitivity[key];
+          input.addEventListener("input", () => {
+            state.accumulationSensitivity[key] = Number(input.value);
+            renderAccumulationSensitivity();
+            renderCharts();
+          });
+        });
+
+        els.accumulationSensitivityReset.addEventListener("click", () => {
+          state.accumulationSensitivity = { savings: 0, years: 0, returns: 0 };
+          els.accumulationSensitivityInputs.forEach(input => {
+            input.value = state.accumulationSensitivity[input.dataset.accumulationSensitivity];
+          });
+          renderAccumulationSensitivity();
+          renderCharts();
+        });
+      }
+
+      function buildAccumulationSensitivityInputs(inputs, sensitivity = state.accumulationSensitivity) {
+        const savingsMultiplier = 1 + sensitivity.savings / 100;
+        const sanitized = sanitizeInputs({
+          ...inputs,
+          monthlyContribution: inputs.monthlyContribution * savingsMultiplier,
+          retirementAge: inputs.retirementAge + sensitivity.years
+        });
+        sanitized.retirementAge = Math.max(sanitized.currentAge + 1, sanitized.retirementAge);
+        return {
+          ...sanitized,
+          returnAdjustment: sensitivity.returns / 100
+        };
+      }
+
+      function renderAccumulationSensitivity() {
+        if (!state.projection || !els.accumulationSensitivityOutcome || !els.accumulationRiskLadder) return;
+        updateAccumulationSensitivityLabels();
+
+        const baseline = state.projection;
+        const sandboxInputs = buildAccumulationSensitivityInputs(state.inputs);
+        const sandboxProjection = calculateProjection(sandboxInputs);
+        state.accumulationSensitivityProjection = sandboxProjection;
+
+        const endingDelta = sandboxProjection.endingBalance - baseline.endingBalance;
+        const goalDelta = sandboxProjection.goalGap - baseline.goalGap;
+        const statusLabel = sandboxProjection.trackStatus.label;
+
+        els.accumulationSensitivityOutcome.classList.toggle("has-gap", sandboxProjection.goalGap < 0);
+        els.accumulationSensitivityOutcome.innerHTML = `
+          <div>
+            <span>Sandbox result</span>
+            <strong>${formatCurrency(sandboxProjection.endingBalance)}</strong>
+          </div>
+          <div class="outcome-badge">${statusLabel}</div>
+          <p>${buildAccumulationComparisonText(endingDelta, goalDelta)} Goal gap/surplus becomes ${formatSignedCurrency(sandboxProjection.goalGap)}.</p>
+        `;
+
+        renderAccumulationRiskLadder(baseline, sandboxProjection);
+      }
+
+      function updateAccumulationSensitivityLabels() {
+        const { savings, years, returns } = state.accumulationSensitivity;
+        els.accumulationSensitivityInputs.forEach(input => {
+          const key = input.dataset.accumulationSensitivity;
+          if (Number(input.value) !== state.accumulationSensitivity[key]) {
+            input.value = state.accumulationSensitivity[key];
+          }
+        });
+        els.accumulationSensitivityValues.savings.textContent = formatSensitivityPercentChange(savings, "less", "more");
+        els.accumulationSensitivityValues.years.textContent = formatSensitivityYearChange(years);
+        els.accumulationSensitivityValues.returns.textContent = formatSensitivityPointChange(returns);
+      }
+
+      function formatSensitivityYearChange(value) {
+        if (nearlyEqual(value, 0)) return "No change";
+        const unit = Math.abs(value) === 1 ? "year" : "years";
+        return `${value > 0 ? "+" : "-"}${Math.abs(value)} ${unit}`;
+      }
+
+      function buildAccumulationComparisonText(endingDelta, goalDelta) {
+        if (endingDelta > 0) {
+          return `This adds ${formatCurrency(endingDelta)} to the projected retirement balance and changes the goal gap by ${formatSignedCurrency(goalDelta)}.`;
+        }
+        if (endingDelta < 0) {
+          return `This reduces the projected retirement balance by ${formatCurrency(Math.abs(endingDelta))} and changes the goal gap by ${formatSignedCurrency(goalDelta)}.`;
+        }
+        return `Projected balance is unchanged versus the baseline, with goal gap movement of ${formatSignedCurrency(goalDelta)}.`;
+      }
+
+      function renderAccumulationRiskLadder(baseline, sandboxProjection) {
+        const items = buildAccumulationSensitivityBreakdownItems(baseline, sandboxProjection);
+        const maxScore = Math.max(...items.map(item => item.pressureScore), 1);
+        els.accumulationRiskLadder.innerHTML = items.map(item => {
+          const isRelief = item.endingDelta > 0;
+          const isNeutral = nearlyEqual(item.endingDelta, 0);
+          const width = Math.max(8, Math.round((item.pressureScore / maxScore) * 100));
+          const barWidth = item.pressureScore > 0 ? width : 0;
+          return `
+            <li class="${isNeutral ? "is-neutral" : isRelief ? "is-relief" : "is-pressure"}${item.isCombined ? " is-combined" : ""}" data-rank="${item.rank}">
+              <div>
+                <div class="risk-item-top">
+                  <strong>${item.label}</strong>
+                  <span class="risk-impact">${item.valueLabel}</span>
+                </div>
+                <p>${item.copy}</p>
+                <div class="risk-stats">
+                  <span>Balance change<strong>${formatSignedCurrency(item.endingDelta)}</strong></span>
+                  <span>Goal progress<strong>${formatSignedPercentPoint(item.goalProgressDelta)}</strong></span>
+                </div>
+                <div class="risk-meter" style="--risk-width:${barWidth}%; --risk-min:${barWidth > 0 ? "8px" : "0"}"><span></span></div>
+              </div>
+            </li>
+          `;
+        }).join("");
+      }
+
+      function buildAccumulationSensitivityBreakdownItems(baseline, sandboxProjection) {
+        const { savings, years, returns } = state.accumulationSensitivity;
+        const configs = [
+          {
+            id: "savings",
+            rank: "1",
+            label: "Monthly savings",
+            valueLabel: formatSensitivityPercentChange(savings, "less", "more"),
+            sensitivity: { savings, years: 0, returns: 0 },
+            copy: getAccumulationLeverCopy("savings", savings)
+          },
+          {
+            id: "years",
+            rank: "2",
+            label: "Retirement age",
+            valueLabel: formatSensitivityYearChange(years),
+            sensitivity: { savings: 0, years, returns: 0 },
+            copy: getAccumulationLeverCopy("years", years)
+          },
+          {
+            id: "returns",
+            rank: "3",
+            label: "Investment returns",
+            valueLabel: formatSensitivityPointChange(returns),
+            sensitivity: { savings: 0, years: 0, returns },
+            copy: getAccumulationLeverCopy("returns", returns)
+          }
+        ];
+
+        const items = configs.map(config => {
+          const projection = calculateProjection(buildAccumulationSensitivityInputs(state.inputs, config.sensitivity));
+          return buildAccumulationImpactItem(config, baseline, projection);
+        });
+
+        items.push(buildAccumulationImpactItem({
+          id: "combined",
+          rank: "All",
+          label: "All changes together",
+          valueLabel: getActiveAccumulationSensitivityCount() ? "Projected result" : "Baseline",
+          isCombined: true,
+          copy: getCombinedAccumulationSensitivityCopy(sandboxProjection)
+        }, baseline, sandboxProjection));
+
+        return items;
+      }
+
+      function buildAccumulationImpactItem(config, baseline, projection) {
+        const endingDelta = projection.endingBalance - baseline.endingBalance;
+        const goalProgressDelta = projection.goalProgress - baseline.goalProgress;
+        return {
+          ...config,
+          projection,
+          endingDelta,
+          goalProgressDelta,
+          pressureScore: Math.abs(endingDelta)
+        };
+      }
+
+      function getActiveAccumulationSensitivityCount() {
+        return Object.values(state.accumulationSensitivity).filter(value => !nearlyEqual(value, 0)).length;
+      }
+
+      function formatSignedPercentPoint(value) {
+        const points = value * 100;
+        if (nearlyEqual(points, 0)) return "No change";
+        const amount = Math.abs(points).toLocaleString(undefined, { maximumFractionDigits: 1 });
+        return `${points > 0 ? "+" : "-"}${amount} pts`;
+      }
+
+      function getAccumulationLeverCopy(id, value) {
+        if (nearlyEqual(value, 0)) {
+          const neutralCopy = {
+            savings: "Move the savings slider to show how recurring deposits change the path.",
+            years: "Move the age slider to show the effect of more or fewer compounding years.",
+            returns: "Move the return slider to test how much the plan depends on market assumptions."
+          };
+          return neutralCopy[id];
+        }
+
+        if (id === "savings") {
+          return value > 0
+            ? "More monthly savings raises the base that compounds every year."
+            : "Less monthly savings leaves less money available to compound.";
+        }
+
+        if (id === "years") {
+          return value > 0
+            ? "More working years add contributions and give existing dollars more time to grow."
+            : "Fewer working years compress the saving window and reduce compounding time.";
+        }
+
+        return value > 0
+          ? "Higher return assumptions lift the path, especially in later years."
+          : "Lower return assumptions show how much the path depends on market growth.";
+      }
+
+      function getCombinedAccumulationSensitivityCopy(projection) {
+        const activeCount = getActiveAccumulationSensitivityCount();
+        if (!activeCount) return "No sandbox changes are active, so this matches the current baseline.";
+        return `Together, the active levers create a ${projection.trackStatus.label.toLowerCase()} path at retirement.`;
+      }
+
       function setupDistributionSensitivitySandbox() {
         els.distributionSensitivityInputs.forEach(input => {
           const key = input.dataset.sensitivity;
@@ -5614,6 +6080,7 @@
       }
 
       function buildScenarioToolbar() {
+        if (!els.scenarioToolbar) return;
         els.scenarioToolbar.innerHTML = scenarioPresets.map(scenario => `
           <button class="scenario-toggle" type="button" aria-pressed="true" data-scenario="${scenario.id}">
             ${scenario.label}
@@ -5639,6 +6106,7 @@
       }
 
       function renderScenarioTable(scenarios) {
+        if (!els.scenarioBody) return;
         els.scenarioBody.innerHTML = scenarios.map(scenario => {
           const projection = scenario.projection;
           return `
@@ -5662,7 +6130,7 @@
           ? "The current path is on track relative to the stated retirement goal."
           : projection.trackStatus.key === "close"
             ? "The current path is close to the stated retirement goal, but there is still a meaningful gap to review."
-            : "The current path is behind the stated retirement goal and may need higher savings, more time, lower fees, or a different risk profile.";
+            : "The current path is behind the stated retirement goal and may need higher savings, more time, lower plan costs, or a different risk profile.";
 
         const gapSentence = projection.goalGap >= 0
           ? `At retirement, the projection shows about ${formatCurrency(projection.realEndingBalance)} in today's dollars, which is ${formatCurrency(projection.goalGap)} above the goal.`
@@ -5675,7 +6143,7 @@
         els.summaryCopy.innerHTML = `
           <p><strong>${projection.trackStatus.label}.</strong> ${trackSentence}</p>
           <p>${gapSentence}</p>
-          <p>The ending nominal balance is projected at ${formatCurrency(projection.endingBalance)}. This includes ${formatCurrency(projection.totalClientContributions)} of client contributions, ${formatCurrency(projection.totalEmployerMatch)} of employer match, and ${formatCurrency(projection.investmentGrowth)} of net investment growth, after an estimated ${formatCurrency(projection.totalFeesPaid)} in fees.</p>
+          <p>The ending nominal balance is projected at ${formatCurrency(projection.endingBalance)}. This includes ${formatCurrency(projection.totalClientContributions + projection.totalEmployerMatch)} of ongoing savings and ${formatCurrency(projection.investmentGrowth)} of net investment growth, after an estimated ${formatCurrency(projection.totalFeesPaid)} in fees.</p>
           <p>${improvementSentence}</p>
         `;
 
@@ -5711,8 +6179,16 @@
         });
         safelyRenderChart(() => {
           if (state.distributionProjection) {
-            renderDistributionPortfolioChart();
+            renderDistributionPortfolioStackChart();
+          }
+        });
+        safelyRenderChart(() => {
+          if (state.distributionProjection) {
             renderDistributionNeedChart();
+          }
+        });
+        safelyRenderChart(() => {
+          if (state.distributionProjection) {
             renderDistributionScenarioChart();
           }
         });
@@ -5729,30 +6205,57 @@
       function renderBalanceChart() {
         const rows = state.projection.annualRows;
         const labels = rows.map(row => formatAge(row.age));
+        const range = buildProjectionRange(state.inputs);
         const datasets = [
           {
-            label: "Portfolio balance",
-            data: rows.map(row => Math.round(row.balance)),
-            borderColor: "#55e6c1",
-            backgroundColor: "rgba(85, 230, 193, 0.13)",
-            fill: true,
+            label: "Lower planning range",
+            tooltipLabel: "Lower range",
+            data: range.lower.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "rgba(122, 183, 255, 0.38)",
+            backgroundColor: "rgba(122, 183, 255, 0.04)",
+            borderDash: [6, 6],
+            fill: false,
             tension: 0.36,
-            pointRadius: 1.8,
+            pointRadius: 0,
             pointHoverRadius: 4
           },
           {
-            label: "Inflation-adjusted balance",
-            data: rows.map(row => Math.round(row.realBalance)),
-            borderColor: "#7ab7ff",
-            backgroundColor: "rgba(122, 183, 255, 0.08)",
+            label: "Upper planning range",
+            tooltipLabel: "Upper range",
+            data: range.upper.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "rgba(214, 249, 111, 0.45)",
+            backgroundColor: "rgba(85, 230, 193, 0.11)",
+            borderDash: [6, 6],
+            fill: "-1",
+            tension: 0.36,
+            pointRadius: 0,
+            pointHoverRadius: 4
+          },
+          {
+            label: "Projected balance",
+            tooltipLabel: "Expected path",
+            data: rows.map(row => Math.round(row.balance)),
+            borderColor: "#55e6c1",
+            backgroundColor: "rgba(85, 230, 193, 0.08)",
             fill: false,
             tension: 0.36,
+            borderWidth: 3,
             pointRadius: 1.8,
             pointHoverRadius: 4
           }
         ];
+        if (els.balanceRangeMethod) {
+          els.balanceRangeMethod.textContent = `Planning range uses the same inputs with the expected return shifted up and down by ${formatPercentagePoints(range.offset)}, based on ${formatPercent(state.projection.model.volatility)} portfolio volatility. It is an illustrative sensitivity band, not a probability forecast.`;
+        }
         state.charts.balance = upsertChart("balance-chart", state.charts.balance, "line", labels, datasets, {
-          plugins: { legend: { position: "bottom", labels: chartLabelStyle() } },
+          plugins: {
+            legend: { position: "bottom", labels: chartLabelStyle() },
+            tooltip: readableTooltip({
+              title: items => `Age ${items[0]?.label || ""}`,
+              label: context => `${context.dataset.tooltipLabel || context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+              footer: () => "Range is a simple what-if, not a promise."
+            })
+          },
           scales: moneyScales()
         });
       }
@@ -5762,13 +6265,13 @@
         const labels = rows.map(row => formatAge(row.age));
         const datasets = [
           {
-            label: "Client contributions",
-            data: rows.map(row => Math.round(row.totalClientContributions)),
+            label: "Starting savings",
+            data: rows.map(() => Math.round(state.inputs.currentSavings)),
             backgroundColor: "#7ab7ff"
           },
           {
-            label: "Employer match",
-            data: rows.map(row => Math.round(row.totalEmployerMatch)),
+            label: "Ongoing savings",
+            data: rows.map(row => Math.round(row.totalClientContributions + row.totalEmployerMatch)),
             backgroundColor: "#f6c766"
           },
           {
@@ -5778,7 +6281,17 @@
           }
         ];
         state.charts.component = upsertChart("component-chart", state.charts.component, "bar", labels, datasets, {
-          plugins: { legend: { position: "bottom", labels: chartLabelStyle() } },
+          plugins: {
+            legend: { position: "bottom", labels: chartLabelStyle() },
+            tooltip: readableTooltip({
+              title: items => `Age ${items[0]?.label || ""}`,
+              label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+              footer: items => {
+                const index = items[0]?.dataIndex || 0;
+                return `Total balance: ${formatCurrency(rows[index]?.balance || 0)}`;
+              }
+            })
+          },
           scales: {
             x: { stacked: true, grid: { display: false }, ticks: { color: "#9aa7a6" } },
             y: {
@@ -5791,98 +6304,142 @@
       }
 
       function renderScenarioChart() {
-        const colors = ["#f5f7ef", "#55e6c1", "#7ab7ff", "#f6c766", "#ff7968", "#d6f96f"];
-        const longest = state.scenarios.reduce((max, scenario) => Math.max(max, scenario.projection.annualRows.length), 0);
+        const baseline = state.projection;
+        const sandbox = state.accumulationSensitivityProjection || state.projection;
+        const range = buildProjectionRange(sandbox.inputs);
+        const longest = Math.max(
+          baseline.annualRows.length,
+          sandbox.annualRows.length,
+          range.lower.annualRows.length,
+          range.upper.annualRows.length
+        );
         const labels = Array.from({ length: longest }, (_, index) => `Year ${index + 1}`);
-        const datasets = state.scenarios.map((scenario, index) => ({
-          label: scenario.label,
-          data: scenario.projection.annualRows.map(row => Math.round(row.realBalance)),
-          borderColor: colors[index % colors.length],
-          backgroundColor: colors[index % colors.length],
-          tension: 0.34,
-          pointRadius: 1.6,
-          pointHoverRadius: 4
-        }));
+        const datasets = [
+          {
+            label: "Baseline",
+            data: baseline.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "rgba(245, 247, 239, 0.72)",
+            backgroundColor: "rgba(245, 247, 239, 0.08)",
+            tension: 0.34,
+            pointRadius: 0,
+            pointHoverRadius: 4
+          },
+          {
+            label: "Sandbox lower range",
+            data: range.lower.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "rgba(122, 183, 255, 0.34)",
+            backgroundColor: "rgba(122, 183, 255, 0.03)",
+            borderDash: [6, 6],
+            fill: false,
+            tension: 0.34,
+            pointRadius: 0,
+            pointHoverRadius: 4
+          },
+          {
+            label: "Sandbox range",
+            data: range.upper.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "rgba(214, 249, 111, 0.42)",
+            backgroundColor: "rgba(85, 230, 193, 0.1)",
+            borderDash: [6, 6],
+            fill: "-1",
+            tension: 0.34,
+            pointRadius: 0,
+            pointHoverRadius: 4
+          },
+          {
+            label: "Sandbox",
+            data: sandbox.annualRows.map(row => Math.round(row.balance)),
+            borderColor: "#55e6c1",
+            backgroundColor: "#55e6c1",
+            tension: 0.34,
+            borderWidth: 3,
+            pointRadius: 1.8,
+            pointHoverRadius: 4
+          }
+        ];
         state.charts.scenario = upsertChart("scenario-chart", state.charts.scenario, "line", labels, datasets, {
-          plugins: { legend: { position: "bottom", labels: chartLabelStyle() } },
+          plugins: {
+            legend: { position: "bottom", labels: chartLabelStyle() },
+            tooltip: readableTooltip({
+              title: items => items[0]?.label || "",
+              label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+              footer: items => {
+                const index = items[0]?.dataIndex || 0;
+                const baselineValue = baseline.annualRows[index]?.balance || 0;
+                const sandboxValue = sandbox.annualRows[index]?.balance || 0;
+                return `Change from baseline: ${formatSignedCurrency(sandboxValue - baselineValue)}`;
+              }
+            })
+          },
           scales: moneyScales()
         });
       }
 
-      function renderDistributionPortfolioChart() {
+      function renderDistributionPortfolioStackChart() {
         const rows = state.distributionProjection.annualRows;
         const labels = rows.map(row => formatAge(row.age));
-        const totalGradient = context => {
-          const { chart } = context;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) return "rgba(245, 247, 239, 0.08)";
-          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          gradient.addColorStop(0, "rgba(245, 247, 239, 0.22)");
-          gradient.addColorStop(0.55, "rgba(85, 230, 193, 0.08)");
-          gradient.addColorStop(1, "rgba(245, 247, 239, 0)");
-          return gradient;
-        };
         const datasets = [
           {
-            label: "Total portfolio",
-            data: rows.map(row => Math.round(row.endingAssets)),
-            borderColor: "#f5f7ef",
-            backgroundColor: totalGradient,
+            label: "Cash bucket",
+            data: rows.map(row => Math.round(row.bucketEndingBalances[0] || 0)),
+            borderColor: "#55e6c1",
+            backgroundColor: "rgba(85, 230, 193, 0.24)",
             fill: true,
-            tension: 0.36,
+            tension: 0.34,
             borderWidth: 3,
             pointRadius: 0,
             pointHoverRadius: 4,
-            order: 1
+            pointHitRadius: 14,
+            stack: "bucketBalances"
           },
           {
-            label: distributionBucketLabels[0],
-            data: rows.map(row => Math.round(row.bucketEndingBalances[0] || 0)),
-            borderColor: "#55e6c1",
-            backgroundColor: "rgba(85, 230, 193, 0.16)",
-            fill: false,
-            tension: 0.38,
-            borderWidth: 2.4,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            order: 2
-          },
-          {
-            label: distributionBucketLabels[1],
+            label: "Refill bucket",
             data: rows.map(row => Math.round(row.bucketEndingBalances[1] || 0)),
             borderColor: "#7ab7ff",
-            backgroundColor: "rgba(122, 183, 255, 0.15)",
-            fill: false,
-            tension: 0.38,
-            borderWidth: 2.4,
+            backgroundColor: "rgba(122, 183, 255, 0.2)",
+            fill: true,
+            tension: 0.34,
+            borderWidth: 3,
             pointRadius: 0,
             pointHoverRadius: 4,
-            order: 2
+            pointHitRadius: 14,
+            stack: "bucketBalances"
           },
           {
-            label: distributionBucketLabels[2],
+            label: "Growth bucket",
             data: rows.map(row => Math.round(row.bucketEndingBalances[2] || 0)),
             borderColor: "#f6c766",
-            backgroundColor: "rgba(246, 199, 102, 0.15)",
-            fill: false,
-            tension: 0.38,
-            borderWidth: 2.4,
+            backgroundColor: "rgba(246, 199, 102, 0.22)",
+            fill: true,
+            tension: 0.34,
+            borderWidth: 3,
             pointRadius: 0,
             pointHoverRadius: 4,
-            order: 2
+            pointHitRadius: 14,
+            stack: "bucketBalances"
           }
         ];
-        state.charts.distributionPortfolio = upsertChart("distribution-portfolio-chart", state.charts.distributionPortfolio, "line", labels, datasets, {
+        state.charts.distributionPortfolioStack = upsertChart("distribution-portfolio-stack-chart", state.charts.distributionPortfolioStack, "line", labels, datasets, {
           plugins: {
             legend: { position: "bottom", labels: chartLabelStyle() },
-            tooltip: {
-              callbacks: {
-                title: items => `Age ${items[0]?.label || ""}`,
-                label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`
+            tooltip: readableTooltip({
+              title: items => `Age ${items[0]?.label || ""}`,
+              label: context => {
+                const row = rows[context.dataIndex];
+                const value = Number(context.raw) || 0;
+                const total = Math.max(sumDistributionValues(row?.bucketEndingBalances || []), 1);
+                const share = (value / total) * 100;
+                return `${context.dataset.label}: ${formatCurrency(value)} (${share.toFixed(0)}%)`;
+              },
+              footer: items => {
+                const row = rows[items[0]?.dataIndex];
+                return `Total left: ${formatCurrency(row?.endingAssets || 0)}`;
               }
-            }
+            }, {
+              itemSort: (a, b) => a.datasetIndex - b.datasetIndex
+            })
           },
-          scales: moneyScales()
+          scales: moneyScales({ stacked: true })
         });
       }
 
@@ -5891,7 +6448,7 @@
         const labels = rows.map(row => formatAge(row.age));
         const datasets = [
           {
-            label: "Withdrawal need",
+            label: "Spending need",
             data: rows.map(row => Math.round(row.annualNeed)),
             borderColor: "#f5f7ef",
             backgroundColor: "rgba(245, 247, 239, 0.1)",
@@ -5901,13 +6458,13 @@
             pointHoverRadius: 4
           },
           {
-            label: `Refill to ${distributionBucketLabels[0]}`,
+            label: "Refill cash",
             data: rows.map(row => Math.round(row.refillShort || 0)),
             backgroundColor: "rgba(85, 230, 193, 0.84)",
             stack: "components"
           },
           {
-            label: `Refill to ${distributionBucketLabels[1]}`,
+            label: "Refill reserve",
             data: rows.map(row => Math.round(row.refillMid || 0)),
             backgroundColor: "rgba(122, 183, 255, 0.84)",
             stack: "components"
@@ -5919,14 +6476,24 @@
             stack: "components"
           },
           {
-            label: "Gap",
+            label: "Shortfall",
             data: rows.map(row => Math.round(row.gap)),
             backgroundColor: "rgba(255, 121, 104, 0.86)",
             stack: "components"
           }
         ];
         state.charts.distributionNeed = upsertChart("distribution-need-chart", state.charts.distributionNeed, "bar", labels, datasets, {
-          plugins: { legend: { position: "bottom", labels: chartLabelStyle() } },
+          plugins: {
+            legend: { position: "bottom", labels: chartLabelStyle() },
+            tooltip: readableTooltip({
+              title: items => `Age ${items[0]?.label || ""}`,
+              label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+              footer: items => {
+                const row = rows[items[0]?.dataIndex];
+                return `Total left: ${formatCurrency(row?.endingAssets || 0)}`;
+              }
+            })
+          },
           scales: {
             x: { stacked: true, grid: { display: false }, ticks: { color: "#9aa7a6", maxRotation: 0 } },
             y: {
@@ -5948,9 +6515,57 @@
           borderWidth: 1
         }];
         state.charts.distributionScenario = upsertChart("distribution-scenario-chart", state.charts.distributionScenario, "bar", labels, datasets, {
-          plugins: { legend: { display: false } },
+          plugins: {
+            legend: { display: false },
+            tooltip: readableTooltip({
+              title: items => items[0]?.label || "",
+              label: context => {
+                const value = context.parsed.y || 0;
+                return value >= 0
+                  ? `Extra left: ${formatCurrency(value)}`
+                  : `Shortfall: ${formatCurrency(Math.abs(value))}`;
+              }
+            }, { displayColors: false })
+          },
           scales: moneyScales()
         });
+      }
+
+      function readableTooltip(callbacks = {}, overrides = {}) {
+        const defaultCallbacks = {
+          label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+          labelColor: context => ({
+            borderColor: context.dataset.borderColor || context.dataset.backgroundColor || "#55e6c1",
+            backgroundColor: context.dataset.borderColor || context.dataset.backgroundColor || "#55e6c1",
+            borderWidth: 2,
+            borderRadius: 4
+          }),
+          labelPointStyle: () => ({
+            pointStyle: "circle",
+            rotation: 0
+          })
+        };
+        return {
+          backgroundColor: "rgba(8, 13, 19, 0.96)",
+          borderColor: "rgba(85, 230, 193, 0.3)",
+          borderWidth: 1,
+          caretPadding: 8,
+          cornerRadius: 8,
+          displayColors: true,
+          padding: 10,
+          boxPadding: 5,
+          titleColor: "#f5f7ef",
+          titleFont: { size: 12, weight: "850" },
+          bodyColor: "#d8efe8",
+          bodyFont: { size: 12, weight: "720" },
+          footerColor: "#55e6c1",
+          footerFont: { size: 12, weight: "850" },
+          ...overrides,
+          callbacks: {
+            ...defaultCallbacks,
+            ...callbacks
+          }
+        };
       }
 
       function chartLabelStyle() {
@@ -5970,26 +6585,18 @@
           existingChart.destroy();
           existingChart = null;
         }
-        const { plugins = {}, ...chartOptions } = options;
+        const { plugins = {}, chartPlugins = [], ...chartOptions } = options;
         const config = {
           type,
           data: { labels, datasets },
+          plugins: chartPlugins,
           options: {
             responsive: true,
             maintainAspectRatio: false,
             animation: reducedMotion ? false : { duration: 900, easing: "easeOutQuart" },
             interaction: { intersect: false, mode: "index" },
             plugins: {
-              tooltip: {
-                backgroundColor: "rgba(8, 13, 19, 0.94)",
-                borderColor: "rgba(245, 247, 239, 0.18)",
-                borderWidth: 1,
-                titleColor: "#f5f7ef",
-                bodyColor: "#d8efe8",
-                callbacks: {
-                  label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`
-                }
-              },
+              tooltip: readableTooltip(),
               ...plugins
             },
             ...chartOptions
@@ -6008,10 +6615,11 @@
         return new Chart(ctx, config);
       }
 
-      function moneyScales() {
+      function moneyScales({ stacked = false } = {}) {
         return {
-          x: { grid: { display: false }, ticks: { color: "#9aa7a6" } },
+          x: { stacked, grid: { display: false }, ticks: { color: "#9aa7a6" } },
           y: {
+            stacked,
             ticks: { color: "#9aa7a6", callback: value => compactCurrency(value) },
             grid: { color: "rgba(245, 247, 239, 0.1)" }
           }
@@ -6061,6 +6669,11 @@
 
       function formatPercent(value) {
         return `${(Number(value) * 100).toFixed(1)}%`;
+      }
+
+      function formatPercentagePoints(value) {
+        const points = (Number(value) * 100).toFixed(1);
+        return `${points} percentage ${nearlyEqual(Number(points), 1) ? "point" : "points"}`;
       }
 
       function formatAge(value) {
