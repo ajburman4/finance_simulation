@@ -397,11 +397,26 @@
       line-height: 0.92;
     }
 
+    #accumulation-view .hero h1 {
+      max-width: 650px;
+      font-size: clamp(3.05rem, 5.2vw, 5.65rem);
+      line-height: 0.92;
+    }
+
     #distribution-view .hero h1 span {
       padding-bottom: 0.08em;
     }
 
+    #accumulation-view .hero h1 span {
+      padding-bottom: 0.08em;
+    }
+
     #distribution-view .hero-inner {
+      grid-template-columns: minmax(500px, 0.78fr) minmax(280px, 1.22fr);
+      gap: clamp(34px, 6vw, 92px);
+    }
+
+    #accumulation-view .hero-inner {
       grid-template-columns: minmax(500px, 0.78fr) minmax(280px, 1.22fr);
       gap: clamp(34px, 6vw, 92px);
     }
@@ -458,7 +473,18 @@
       min-height: 390px;
     }
 
+    #accumulation-view .hero-visual {
+      justify-self: end;
+      width: min(100%, 500px);
+      min-height: 390px;
+    }
+
     #distribution-view .orbit-stage {
+      min-height: 390px;
+      transform: translateX(clamp(10px, 3vw, 42px));
+    }
+
+    #accumulation-view .orbit-stage {
       min-height: 390px;
       transform: translateX(clamp(10px, 3vw, 42px));
     }
@@ -467,11 +493,23 @@
       width: min(28vw, 340px);
     }
 
+    #accumulation-view .orbit-ring {
+      width: min(28vw, 340px);
+    }
+
     #distribution-view .orbit-ring:nth-child(2) {
       width: min(23vw, 280px);
     }
 
+    #accumulation-view .orbit-ring:nth-child(2) {
+      width: min(23vw, 280px);
+    }
+
     #distribution-view .orbit-ring:nth-child(3) {
+      width: min(18vw, 220px);
+    }
+
+    #accumulation-view .orbit-ring:nth-child(3) {
       width: min(18vw, 220px);
     }
 
@@ -747,6 +785,11 @@
       align-items: start;
     }
 
+    #inputs .story-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
     #distribution-accounts .story-grid {
       grid-template-columns: 1fr;
       gap: 16px;
@@ -820,6 +863,10 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+    }
+
+    #inputs .planning-form {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
     }
 
     .planning-form {
@@ -1030,6 +1077,13 @@
       height: 100%;
     }
 
+    #accumulation-view .metric-card {
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+
     .metric-card span {
       color: var(--muted);
       font-size: 0.74rem;
@@ -1046,6 +1100,10 @@
       font-variant-numeric: tabular-nums;
       overflow-wrap: anywhere;
       transition: opacity 120ms ease;
+    }
+
+    #accumulation-view .metric-card strong {
+      margin-top: 0;
     }
 
     .metric-card small {
@@ -1090,6 +1148,10 @@
       gap: 14px;
       align-content: start;
       min-width: 0;
+    }
+
+    #inputs .spotlight {
+      gap: 12px;
     }
 
     #distribution-accounts .distribution-form .feature-field,
@@ -2991,7 +3053,20 @@
       align-items: stretch;
     }
 
+    #scenario-content.sensitivity-layout {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
     #distribution-scenario-content .sensitivity-sandbox .panel-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    #scenario-content .sensitivity-sandbox .panel-body {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
@@ -3005,12 +3080,31 @@
       min-height: 164px;
     }
 
+    #scenario-content .sensitivity-outcome {
+      margin-bottom: 0;
+      align-content: start;
+      grid-template-columns: 1fr;
+      min-height: 164px;
+    }
+
     #distribution-scenario-content .sensitivity-outcome strong {
       font-size: clamp(1.34rem, 2vw, 1.74rem);
       line-height: 1.08;
     }
 
+    #scenario-content .sensitivity-outcome strong {
+      font-size: clamp(1.34rem, 2vw, 1.74rem);
+      line-height: 1.08;
+    }
+
     #distribution-scenario-content .sensitivity-outcome .outcome-badge {
+      justify-self: center;
+      width: min(82%, 190px);
+      min-width: 0;
+      margin-top: 4px;
+    }
+
+    #scenario-content .sensitivity-outcome .outcome-badge {
       justify-self: center;
       width: min(82%, 190px);
       min-width: 0;
@@ -3023,7 +3117,18 @@
       gap: 12px;
     }
 
+    #scenario-content .sensitivity-controls {
+      display: contents;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
     #distribution-scenario-content .sensitivity-control {
+      min-height: 164px;
+      align-content: start;
+    }
+
+    #scenario-content .sensitivity-control {
       min-height: 164px;
       align-content: start;
     }
@@ -3047,12 +3152,28 @@
       padding-top: 16px;
     }
 
+    #scenario-content .risk-ladder-panel .panel-body {
+      padding-top: 16px;
+    }
+
     #distribution-scenario-content .risk-ladder {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
 
+    #scenario-content .risk-ladder {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
     #distribution-scenario-content .risk-ladder li {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      min-height: 342px;
+      padding: 14px;
+    }
+
+    #scenario-content .risk-ladder li {
       grid-template-columns: minmax(0, 1fr);
       align-content: start;
       min-height: 342px;
@@ -3065,11 +3186,26 @@
       height: 100%;
     }
 
+    #scenario-content .risk-ladder li > div {
+      display: grid;
+      grid-template-rows: auto minmax(74px, 1fr) auto auto;
+      height: 100%;
+    }
+
     #distribution-scenario-content .risk-ladder li::before {
       margin-bottom: 10px;
     }
 
+    #scenario-content .risk-ladder li::before {
+      margin-bottom: 10px;
+    }
+
     #distribution-scenario-content .risk-item-top {
+      align-items: flex-start;
+      min-height: 46px;
+    }
+
+    #scenario-content .risk-item-top {
       align-items: flex-start;
       min-height: 46px;
     }
@@ -3080,7 +3216,19 @@
       font-size: 0.76rem;
     }
 
+    #scenario-content .risk-impact {
+      max-width: 48%;
+      min-width: 84px;
+      font-size: 0.76rem;
+    }
+
     #distribution-scenario-content .risk-ladder p {
+      min-height: 62px;
+      font-size: 0.78rem;
+      line-height: 1.44;
+    }
+
+    #scenario-content .risk-ladder p {
       min-height: 62px;
       font-size: 0.78rem;
       line-height: 1.44;
@@ -3093,13 +3241,24 @@
       align-self: end;
     }
 
+    #scenario-content .risk-stats {
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin-top: 10px;
+      align-self: end;
+    }
+
     #distribution-scenario-content .risk-meter {
+      align-self: end;
+    }
+
+    #scenario-content .risk-meter {
       align-self: end;
     }
 
     .summary-layout {
       grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
-      align-items: stretch;
+      align-items: start;
     }
 
     .summary-card {
@@ -3129,6 +3288,21 @@
       display: grid;
       gap: 12px;
       align-content: start;
+    }
+
+    #summary .summary-side-stack {
+      grid-template-rows: auto minmax(0, 1fr);
+      height: min(100%, 600px);
+    }
+
+    #summary .summary-side-stack .summary-card {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #summary .summary-side-stack .summary-card .panel-body {
+      max-height: 492px;
+      overflow: auto;
     }
 
     .summary-side-stack > .button {
@@ -3785,12 +3959,25 @@
         grid-template-columns: 1fr;
       }
 
+      #accumulation-view .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
       #distribution-view .hero-visual {
         justify-self: center;
         width: 100%;
       }
 
+      #accumulation-view .hero-visual {
+        justify-self: center;
+        width: 100%;
+      }
+
       #distribution-view .orbit-stage {
+        transform: none;
+      }
+
+      #accumulation-view .orbit-stage {
         transform: none;
       }
 
@@ -3810,9 +3997,15 @@
       }
 
       #distribution-accounts .income-runway .runway-stats,
+      #scenario-content .sensitivity-controls,
+      #scenario-content .risk-ladder,
       #distribution-scenario-content .sensitivity-controls,
       #distribution-scenario-content .risk-ladder {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #scenario-content .sensitivity-sandbox .panel-body {
+        grid-template-columns: 1fr;
       }
 
       #distribution-scenario-content .sensitivity-sandbox .panel-body {
@@ -3981,7 +4174,16 @@
         min-height: 320px;
       }
 
+      #accumulation-view .hero-visual,
+      #accumulation-view .orbit-stage {
+        min-height: 320px;
+      }
+
       #distribution-view .orbit-ring {
+        width: min(84vw, 320px);
+      }
+
+      #accumulation-view .orbit-ring {
         width: min(84vw, 320px);
       }
 
@@ -3989,7 +4191,15 @@
         width: min(68vw, 260px);
       }
 
+      #accumulation-view .orbit-ring:nth-child(2) {
+        width: min(68vw, 260px);
+      }
+
       #distribution-view .orbit-ring:nth-child(3) {
+        width: min(52vw, 210px);
+      }
+
+      #accumulation-view .orbit-ring:nth-child(3) {
         width: min(52vw, 210px);
       }
 
@@ -4007,13 +4217,23 @@
       }
 
       #distribution-accounts .income-runway .runway-stats,
+      #scenario-content .sensitivity-controls,
+      #scenario-content .risk-ladder,
       #distribution-scenario-content .sensitivity-controls,
       #distribution-scenario-content .risk-ladder {
         grid-template-columns: 1fr;
       }
 
+      #scenario-content .sensitivity-control {
+        min-height: 112px;
+      }
+
       #distribution-scenario-content .sensitivity-control {
         min-height: 112px;
+      }
+
+      #scenario-content .risk-ladder p {
+        min-height: 0;
       }
 
       #distribution-scenario-content .risk-ladder p {
@@ -4564,23 +4784,9 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-inner">
         <div class="hero-copy reveal in-view">
-          <h1 id="hero-title">Make the future feel <span>inspectable.</span></h1>
-          <p>A live financial simulator for turning age, savings, inflation, risk, and client what-ifs into one scrollable story.</p>
-          <div class="hero-actions">
-            <a class="button primary" href="#inputs">
-              Start the simulation
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 5v14m0 0 6-6m-6 6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a>
-            <button class="button ghost" id="print-button" type="button">
-              Print summary
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <span class="live-note">Live preview: <strong data-metric="realEndingBalance">$0</strong> in today's dollars</span>
-          </div>
+          <h1 id="hero-title">Set a target for <span>your future.</span></h1>
+          <p>What do you have today, what do you want your future to look like, and how can we get there?</p>
+          <a class="hero-text-link" href="#inputs">Let's get started</a>
         </div>
 
         <div class="hero-visual no-print" aria-hidden="true">
@@ -4588,15 +4794,6 @@
             <div class="orbit-ring"><span class="orbit-dot"></span></div>
             <div class="orbit-ring"><span class="orbit-dot"></span></div>
             <div class="orbit-ring"><span class="orbit-dot"></span></div>
-            <article class="future-card">
-              <h2>Projected path</h2>
-              <div class="future-balance" data-metric="endingBalance">$0</div>
-              <div class="sparkline" id="hero-sparkline"></div>
-              <div class="future-meta">
-                <div><span>Goal delta</span><strong data-metric="goalGap">$0</strong></div>
-                <div><span>Today's dollars</span><strong data-metric="realEndingBalance">$0</strong></div>
-              </div>
-            </article>
           </div>
         </div>
       </div>
@@ -4609,15 +4806,14 @@
         <div class="section-number">01</div>
         <div>
           <h2 id="inputs-title">Set the scene.</h2>
-          <p>Set the client’s starting point, savings rhythm, and assumptions. The projection updates immediately.</p>
+          <p>What do you have today and where do you want to be?</p>
         </div>
       </div>
 
       <div class="story-grid">
         <section class="panel reveal" aria-labelledby="client-inputs-title">
           <div class="panel-header">
-            <h2 id="client-inputs-title">Client inputs</h2>
-            <p>Saved locally in this browser.</p>
+            <h2 id="client-inputs-title">Inputs</h2>
           </div>
           <div class="panel-body">
             <form id="input-form" class="form-grid planning-form">
@@ -4631,11 +4827,11 @@
               </div>
               <div class="field">
                 <label for="currentSavings">Current savings</label>
-                <input id="currentSavings" name="currentSavings" type="number" min="0" step="1000" inputmode="decimal">
+                <input id="currentSavings" name="currentSavings" type="text" min="0" step="1000" inputmode="decimal" autocomplete="off" data-format="money">
               </div>
               <div class="field">
                 <label for="monthlyContribution">Monthly contribution</label>
-                <input id="monthlyContribution" name="monthlyContribution" type="number" min="0" step="50" inputmode="decimal">
+                <input id="monthlyContribution" name="monthlyContribution" type="text" min="0" step="50" inputmode="decimal" autocomplete="off" data-format="money">
               </div>
               <div class="field">
                 <label for="annualContributionIncrease">Annual increase (%)</label>
@@ -4643,7 +4839,7 @@
               </div>
               <div class="field">
                 <label for="employerMatch">Employer match/month</label>
-                <input id="employerMatch" name="employerMatch" type="number" min="0" step="25" inputmode="decimal">
+                <input id="employerMatch" name="employerMatch" type="text" min="0" step="25" inputmode="decimal" autocomplete="off" data-format="money">
               </div>
               <div class="field">
                 <label for="portfolioModel">Portfolio model</label>
@@ -4659,10 +4855,9 @@
               </div>
               <div class="field">
                 <label for="retirementGoalBalance">Retirement goal</label>
-                <input id="retirementGoalBalance" name="retirementGoalBalance" type="number" min="0" step="10000" inputmode="decimal">
+                <input id="retirementGoalBalance" name="retirementGoalBalance" type="text" min="0" step="10000" inputmode="decimal" autocomplete="off" data-format="money">
               </div>
             </form>
-            <div class="input-note compact-note">Deterministic baseline. Volatility appears as planning range context.</div>
             <div class="hero-actions" style="margin-top: 18px;">
               <button class="button" id="reset-button" type="button">Reset inputs</button>
             </div>
@@ -4674,22 +4869,18 @@
             <article class="metric-card">
               <span>Ending balance</span>
               <strong data-metric="endingBalance">$0</strong>
-              <small>Projected at retirement</small>
             </article>
             <article class="metric-card">
               <span>Starting savings</span>
               <strong data-metric="startingSavings">$0</strong>
-              <small>Already invested</small>
             </article>
             <article class="metric-card">
               <span>Goal gap/surplus</span>
               <strong data-metric="goalGap">$0</strong>
-              <small>Compared with goal</small>
             </article>
             <article class="metric-card">
-              <span>Ongoing savings</span>
+              <span>Future contributions</span>
               <strong data-metric="ongoingSavings">$0</strong>
-              <small>Client plus workplace contributions</small>
             </article>
           </div>
 
@@ -4702,7 +4893,7 @@
             </div>
             <div class="goal-story">
               <strong class="status-chip" id="track-status">On track</strong>
-              <h3 id="goal-title">The path is alive.</h3>
+              <h3 id="goal-title">Progress toward your goal.</h3>
               <p id="goal-message"></p>
             </div>
           </section>
@@ -4714,8 +4905,8 @@
       <div class="section-intro reveal">
         <div class="section-number">02</div>
         <div>
-          <h2 id="projection-title">Watch compounding gather speed.</h2>
-          <p>Show the expected path, range context, and the components behind the ending value.</p>
+          <h2 id="projection-title">Projecting potential growth.</h2>
+          <p>How do your savings compound over time?</p>
         </div>
       </div>
 
@@ -4725,22 +4916,18 @@
           <article class="metric-card">
             <span>Starting savings</span>
             <strong data-metric="startingSavings">$0</strong>
-            <small>Balance today</small>
           </article>
           <article class="metric-card">
-            <span>Ongoing savings</span>
+            <span>Future contributions</span>
             <strong data-metric="ongoingSavings">$0</strong>
-            <small>Client plus workplace additions</small>
           </article>
           <article class="metric-card">
             <span>Investment growth</span>
             <strong data-metric="investmentGrowth">$0</strong>
-            <small>Compounding after plan costs</small>
           </article>
           <article class="metric-card">
             <span>Portfolio model</span>
-            <strong data-metric="portfolioLabel">Balanced Growth</strong>
-            <small data-metric="portfolioAssumptions">7.0% return / 13.0% volatility</small>
+            <strong data-metric="portfolioLabel">Balanced Growth 10%</strong>
           </article>
         </div>
 
@@ -4752,14 +4939,9 @@
             <div class="chart-fallback" data-fallback="balance">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
           </section>
           <section class="chart-panel">
-            <h3>Ending value components <span>What built it</span></h3>
+            <h3>Ending value components</h3>
             <div class="chart-wrap"><canvas id="component-chart"></canvas></div>
             <div class="chart-fallback" data-fallback="component">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
-            <div class="data-strip">
-              <div><span>Starting</span><strong data-metric="startingSavings">$0</strong></div>
-              <div><span>Ongoing savings</span><strong data-metric="ongoingSavings">$0</strong></div>
-              <div><span>Growth</span><strong data-metric="investmentGrowth">$0</strong></div>
-            </div>
           </section>
         </div>
 
@@ -4777,64 +4959,54 @@
       <div class="section-intro reveal">
         <div class="section-number">03</div>
         <div>
-          <h2 id="scenarios-title">Pull one lever. See the story bend.</h2>
-          <p>Compare saving, time, and return changes against the baseline.</p>
+          <h2 id="scenarios-title">What can change?</h2>
+          <p>Compare savings, timing, and return changes against the baseline.</p>
         </div>
       </div>
 
       <div id="scenario-empty" class="empty-state">Enter a retirement age greater than current age to compare scenarios.</div>
-      <div id="scenario-content" class="scenario-layout">
-        <div class="sensitivity-layout reveal">
-          <section class="panel sensitivity-sandbox">
-            <div class="panel-header sensitivity-header">
-              <div>
-                <h3>Sensitivity sandbox</h3>
-                <p>Compare active levers with the baseline.</p>
-              </div>
-              <button class="button subtle-button" type="button" id="accumulation-sensitivity-reset">Reset</button>
+      <div id="scenario-content" class="sensitivity-layout">
+        <section class="panel sensitivity-sandbox reveal">
+          <div class="panel-header sensitivity-header">
+            <div>
+              <h3>Sensitivity sandbox</h3>
             </div>
-            <div class="panel-body">
-              <div class="sensitivity-outcome" id="accumulation-sensitivity-outcome" aria-live="polite"></div>
-              <div class="sensitivity-controls" id="accumulation-sensitivity-controls">
-                <label class="sensitivity-control" for="accumulationSensitivitySavings">
-                  <span>Monthly savings</span>
-                  <strong id="accumulationSensitivitySavingsValue">No change</strong>
-                  <input id="accumulationSensitivitySavings" type="range" min="-20" max="30" step="5" value="0" data-accumulation-sensitivity="savings">
-                  <small>Changes the recurring deposit base.</small>
-                </label>
-                <label class="sensitivity-control" for="accumulationSensitivityYears">
-                  <span>Retirement age</span>
-                  <strong id="accumulationSensitivityYearsValue">No change</strong>
-                  <input id="accumulationSensitivityYears" type="range" min="-2" max="5" step="1" value="0" data-accumulation-sensitivity="years">
-                  <small>Adds or removes compounding years.</small>
-                </label>
-                <label class="sensitivity-control" for="accumulationSensitivityReturns">
-                  <span>Investment returns</span>
-                  <strong id="accumulationSensitivityReturnsValue">No change</strong>
-                  <input id="accumulationSensitivityReturns" type="range" min="-2" max="2" step="0.25" value="0" data-accumulation-sensitivity="returns">
-                  <small>Tests market assumption sensitivity.</small>
-	                </label>
-	              </div>
-	            </div>
-	          </section>
-
-          <section class="panel risk-ladder-panel">
-            <div class="panel-header">
-              <h3>Lever impact</h3>
-              <p>Isolated levers plus combined result.</p>
+            <button class="button subtle-button" type="button" id="accumulation-sensitivity-reset">Reset</button>
+          </div>
+          <div class="panel-body">
+            <div class="sensitivity-outcome" id="accumulation-sensitivity-outcome" aria-live="polite"></div>
+            <div class="sensitivity-controls" id="accumulation-sensitivity-controls">
+              <label class="sensitivity-control" for="accumulationSensitivitySavings">
+                <span>Monthly savings</span>
+                <strong id="accumulationSensitivitySavingsValue">No change</strong>
+                <input id="accumulationSensitivitySavings" type="range" min="-30" max="30" step="5" value="0" data-accumulation-sensitivity="savings">
+                <small>Changes future contribution growth.</small>
+              </label>
+              <label class="sensitivity-control" for="accumulationSensitivityYears">
+                <span>Retirement age</span>
+                <strong id="accumulationSensitivityYearsValue">No change</strong>
+                <input id="accumulationSensitivityYears" type="range" min="-5" max="5" step="1" value="0" data-accumulation-sensitivity="years">
+                <small>Changes the compounding window.</small>
+              </label>
+              <label class="sensitivity-control" for="accumulationSensitivityReturns">
+                <span>Investment returns</span>
+                <strong id="accumulationSensitivityReturnsValue">No change</strong>
+                <input id="accumulationSensitivityReturns" type="range" min="-2" max="2" step="0.25" value="0" data-accumulation-sensitivity="returns">
+                <small>Changes projected portfolio growth.</small>
+              </label>
             </div>
-            <div class="panel-body">
-              <ol class="risk-ladder" id="accumulation-risk-ladder"></ol>
-            </div>
-          </section>
-        </div>
-
-        <section class="chart-panel reveal">
-          <h3>Projected path under current levers <span>Baseline vs sandbox</span></h3>
-          <div class="chart-wrap"><canvas id="scenario-chart"></canvas></div>
-          <div class="chart-fallback" data-fallback="scenario">Charts are unavailable because Chart.js did not load. Scenario metrics still work.</div>
+            <p class="sensitivity-section-impact" id="accumulation-sensitivity-impact"></p>
+          </div>
         </section>
 
+        <section class="panel risk-ladder-panel reveal">
+          <div class="panel-header">
+            <h3>Change breakdown</h3>
+          </div>
+          <div class="panel-body">
+            <ol class="risk-ladder" id="accumulation-risk-ladder"></ol>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -4842,8 +5014,8 @@
       <div class="section-intro reveal">
         <div class="section-number">04</div>
         <div>
-          <h2 id="summary-title">Land the conversation.</h2>
-          <p>A plain-English wrap-up turns the simulation into something a client can keep, print, or revisit after the meeting.</p>
+          <h2 id="summary-title">Print the summary.</h2>
+          <p>Inputs, assumptions, and your results.</p>
         </div>
       </div>
 
@@ -4851,20 +5023,27 @@
         <section class="summary-card reveal">
           <div class="panel-header">
             <h2>Client summary</h2>
-            <p>Generated from the active inputs and selected scenarios.</p>
           </div>
           <div class="panel-body summary-copy" id="summary-copy"></div>
         </section>
 
-        <aside class="summary-card reveal">
-          <div class="panel-header">
-            <h3>Assumptions</h3>
-            <p>Illustrative inputs, not a recommendation.</p>
-          </div>
-          <div class="panel-body">
-            <ul class="assumption-list" id="assumption-list"></ul>
-          </div>
-        </aside>
+        <div class="summary-side-stack reveal">
+          <button class="button ghost no-print" id="print-button" type="button">
+            Print summary
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <aside class="summary-card">
+            <div class="panel-header">
+              <h3>Assumptions</h3>
+              <p>Illustrative inputs, not a recommendation.</p>
+            </div>
+            <div class="panel-body">
+              <ul class="assumption-list" id="assumption-list"></ul>
+            </div>
+          </aside>
+        </div>
       </div>
 
       <div class="disclaimer reveal">
@@ -5138,10 +5317,10 @@
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const portfolioModels = {
-        conservative: { label: "Conservative", annualReturn: 0.04, volatility: 0.05 },
-        moderate: { label: "Moderate", annualReturn: 0.055, volatility: 0.09 },
-        balancedGrowth: { label: "Balanced Growth", annualReturn: 0.07, volatility: 0.13 },
-        aggressive: { label: "Aggressive", annualReturn: 0.085, volatility: 0.18 }
+        conservative: { label: "Conservative 6%", annualReturn: 0.06, volatility: 0.05 },
+        moderate: { label: "Moderate 8%", annualReturn: 0.08, volatility: 0.09 },
+        balancedGrowth: { label: "Balanced Growth 10%", annualReturn: 0.10, volatility: 0.13 },
+        aggressive: { label: "Aggressive Growth 12%", annualReturn: 0.12, volatility: 0.18 }
       };
 
       const modelOrder = ["conservative", "moderate", "balancedGrowth", "aggressive"];
@@ -5269,6 +5448,7 @@
         },
         accumulationSensitivityInputs: Array.from(document.querySelectorAll("[data-accumulation-sensitivity]")),
         accumulationRiskLadder: document.getElementById("accumulation-risk-ladder"),
+        accumulationSensitivityImpact: document.getElementById("accumulation-sensitivity-impact"),
         summaryCopy: document.getElementById("summary-copy"),
         assumptionList: document.getElementById("assumption-list"),
         projectionEmpty: document.getElementById("projection-empty"),
@@ -5354,7 +5534,9 @@
       function populateInputs() {
         Object.entries(state.inputs).forEach(([key, value]) => {
           const input = els.form.elements[key];
-          if (input) input.value = value;
+          if (!input) return;
+          input.value = value;
+          formatAccumulationField(input);
         });
       }
 
@@ -5374,7 +5556,8 @@
           recalculate();
         });
 
-        els.form.addEventListener("change", () => {
+        els.form.addEventListener("change", event => {
+          formatAccumulationField(event.target);
           state.inputs = readInputs();
           saveInputs(state.inputs);
           recalculate();
@@ -5392,6 +5575,16 @@
           input.addEventListener("blur", event => {
             formatDistributionField(event.target);
             applyDistributionFormValues();
+          });
+        });
+
+        getAccumulationInputControls().forEach(input => {
+          input.addEventListener("focus", event => unformatAccumulationField(event.target));
+          input.addEventListener("blur", event => {
+            formatAccumulationField(event.target);
+            state.inputs = readInputs();
+            saveInputs(state.inputs);
+            recalculate();
           });
         });
 
@@ -5686,9 +5879,13 @@
         Object.keys(defaults).forEach(key => {
           const input = els.form.elements[key];
           if (!input) return;
-          data[key] = input.tagName === "SELECT" ? input.value : Number(input.value);
+          data[key] = input.tagName === "SELECT" ? input.value : parseFormattedNumber(input.value);
         });
         return sanitizeInputs(data);
+      }
+
+      function getAccumulationInputControls() {
+        return Array.from(els.form.elements).filter(input => input.dataset?.format);
       }
 
       function sanitizeInputs(inputs) {
@@ -5760,6 +5957,20 @@
       }
 
       function unformatDistributionField(input) {
+        if (!input || !input.dataset || !input.dataset.format) return;
+        const numeric = parseFormattedNumber(input.value);
+        input.value = Number.isInteger(numeric) ? String(numeric) : String(numeric);
+        input.select?.();
+      }
+
+      function formatAccumulationField(input) {
+        if (!input || !input.dataset) return;
+        if (input.dataset.format === "money") {
+          input.value = `$${formatInputCurrency(parseFormattedNumber(input.value))}`;
+        }
+      }
+
+      function unformatAccumulationField(input) {
         if (!input || !input.dataset || !input.dataset.format) return;
         const numeric = parseFormattedNumber(input.value);
         input.value = Number.isInteger(numeric) ? String(numeric) : String(numeric);
@@ -5855,6 +6066,7 @@
         els.assumptionList.innerHTML = "";
         if (els.accumulationSensitivityOutcome) els.accumulationSensitivityOutcome.innerHTML = "";
         if (els.accumulationRiskLadder) els.accumulationRiskLadder.innerHTML = "";
+        if (els.accumulationSensitivityImpact) els.accumulationSensitivityImpact.textContent = "";
         updateMetricText({});
       }
 
@@ -6392,6 +6604,7 @@
       }
 
       function renderHeroSparkline(projection) {
+        if (!els.heroSparkline) return;
         const rows = projection.annualRows;
         if (!rows.length) {
           els.heroSparkline.innerHTML = "";
@@ -6417,11 +6630,11 @@
           const yearGrowth = priorRow
             ? row.balance - priorRow.balance - addedSavings
             : row.balance - projection.inputs.currentSavings - addedSavings;
-          const oldPrincipal = projection.inputs.currentSavings;
-          const newPrincipal = row.totalClientContributions + row.totalEmployerMatch;
-          const totalGrowth = row.balance - oldPrincipal - newPrincipal;
-          const stackTotal = Math.max(row.balance, oldPrincipal + newPrincipal + Math.max(0, totalGrowth), 1);
-          const oldShare = Math.max(0, (oldPrincipal / stackTotal) * 100);
+          const existingPrincipal = projection.inputs.currentSavings + (priorRow ? priorRow.totalClientContributions + priorRow.totalEmployerMatch : 0);
+          const newPrincipal = addedSavings;
+          const totalGrowth = row.balance - existingPrincipal - newPrincipal;
+          const stackTotal = Math.max(row.balance, existingPrincipal + newPrincipal + Math.max(0, totalGrowth), 1);
+          const oldShare = Math.max(0, (existingPrincipal / stackTotal) * 100);
           const newShare = Math.max(0, (newPrincipal / stackTotal) * 100);
           const growthShare = Math.max(0, (totalGrowth / stackTotal) * 100);
           const progress = Math.max(0, Math.min(100, (row.realBalance / goal) * 100));
@@ -6439,9 +6652,9 @@
                     <i style="--share:${growthShare}%; --share-min:${growthShare > 0 ? "4px" : "0"}; --source-color:var(--teal)"></i>
                   </div>
                   <div class="annual-components">
-                    <span>Old principal<strong>${formatCurrency(oldPrincipal)}</strong></span>
+                    <span>Existing principal<strong>${formatCurrency(existingPrincipal)}</strong></span>
                     <span>New principal<strong>${formatCurrency(newPrincipal)}</strong></span>
-                    <span>Growth<strong>${formatSignedCurrency(totalGrowth)}</strong></span>
+                    <span>Total growth<strong>${formatSignedCurrency(totalGrowth)}</strong></span>
                   </div>
                 </div>
               </div>
@@ -6963,6 +7176,10 @@
           <p>${buildAccumulationComparisonText(endingDelta, goalDelta)} Goal gap/surplus becomes ${formatSignedCurrency(sandboxProjection.goalGap)}.</p>
         `;
 
+        if (els.accumulationSensitivityImpact) {
+          els.accumulationSensitivityImpact.textContent = getAccumulationSensitivityImpactCopy(baseline, sandboxProjection);
+        }
+
         renderAccumulationRiskLadder(baseline, sandboxProjection);
       }
 
@@ -7122,6 +7339,15 @@
         const activeCount = getActiveAccumulationSensitivityCount();
         if (!activeCount) return "No sandbox changes are active, so this matches the current baseline.";
         return `Together, the active levers create a ${projection.trackStatus.label.toLowerCase()} path at retirement.`;
+      }
+
+      function getAccumulationSensitivityImpactCopy(baseline, projection) {
+        if (!getActiveAccumulationSensitivityCount()) {
+          return "No sandbox changes are active, so the baseline projection is unchanged.";
+        }
+        const balanceDelta = projection.endingBalance - baseline.endingBalance;
+        const realDelta = projection.realEndingBalance - baseline.realEndingBalance;
+        return `Together, the active changes move the projected balance by ${formatSignedCurrency(balanceDelta)} and the inflation-adjusted result by ${formatSignedCurrency(realDelta)}.`;
       }
 
       function setupDistributionSensitivitySandbox() {
@@ -7575,31 +7801,155 @@
         const model = portfolioModels[inputs.portfolioModel];
         const yearsToRetirement = Math.max(0, inputs.retirementAge - inputs.currentAge);
         const contributionTotal = projection.totalClientContributions + projection.totalEmployerMatch;
+        const goal = Math.max(inputs.retirementGoalBalance, 1);
+        const goalProgress = Math.max(0, Math.min(100, (projection.realEndingBalance / goal) * 100));
+        const goalProgressLabel = `${Math.round(goalProgress)}%`;
+        const componentTotal = Math.max(projection.endingBalance, 1);
+        const componentRows = [
+          ["Starting savings", inputs.currentSavings, "#7ab7ff"],
+          ["Future contributions", contributionTotal, "#f6c766"],
+          ["Net growth", projection.investmentGrowth, "#55e6c1"]
+        ];
+        const componentSegments = componentRows.map(([, value, color]) => {
+          const width = Math.max(0, Math.min(100, (Math.max(value, 0) / componentTotal) * 100));
+          return `<i style="--bar-width:${width}%; --bar-color:${color}; --bar-min:${width > 0 ? "8px" : "0"}"></i>`;
+        }).join("");
+        const componentMixRows = componentRows.map(([label, value, color]) => {
+          const share = (Math.max(value, 0) / componentTotal) * 100;
+          return `
+            <div>
+              <span><i style="--mix-color:${color}"></i>${label}</span>
+              <strong>${formatCurrency(value)}</strong>
+              <span>${Math.round(Math.max(0, share))}%</span>
+            </div>
+          `;
+        }).join("");
+        const afterContributions = inputs.currentSavings + contributionTotal;
+        const waterfallExtents = [
+          0,
+          inputs.currentSavings,
+          afterContributions,
+          projection.endingBalance,
+          projection.realEndingBalance,
+          inputs.retirementGoalBalance
+        ];
+        const waterfallMin = Math.min(...waterfallExtents);
+        const waterfallMax = Math.max(...waterfallExtents);
+        const waterfallRange = Math.max(waterfallMax - waterfallMin, 1);
+        const waterfallScale = value => ((value - waterfallMin) / waterfallRange) * 100;
+        const waterfallStyle = (from, to) => {
+          const bottom = waterfallScale(Math.min(from, to));
+          const height = Math.abs(to - from) / waterfallRange * 100;
+          return `--bar-bottom:${bottom}%; --bar-height:${height}%; --bar-min:0; --label-bottom:${waterfallScale(Math.max(from, to))}%;`;
+        };
+        const waterfallBars = [
+          {
+            label: "Starting savings",
+            value: formatCurrency(inputs.currentSavings),
+            from: 0,
+            to: inputs.currentSavings,
+            color: "#2f7ac8"
+          },
+          {
+            label: "Future contributions",
+            value: formatCurrency(contributionTotal),
+            from: inputs.currentSavings,
+            to: afterContributions,
+            color: "#ffbf00"
+          },
+          {
+            label: projection.investmentGrowth >= 0 ? "Investment growth" : "Investment loss",
+            value: formatSignedCurrency(projection.investmentGrowth),
+            from: afterContributions,
+            to: projection.endingBalance,
+            color: projection.investmentGrowth >= 0 ? "#55e6c1" : "#ff7968",
+            isNegative: projection.investmentGrowth < 0
+          },
+          {
+            label: "Today's dollars",
+            value: formatCurrency(projection.realEndingBalance),
+            from: 0,
+            to: projection.realEndingBalance,
+            color: projection.goalGap >= 0 ? "#167a55" : "#ff7968",
+            isNegative: projection.realEndingBalance < 0
+          }
+        ];
+        const waterfallMarkup = waterfallBars.map(bar => `
+          <div class="summary-waterfall-column">
+            <span class="summary-waterfall-bar ${bar.isNegative ? "is-negative" : ""}" style="${waterfallStyle(bar.from, bar.to)} --bar-color:${bar.color};"></span>
+            <strong class="summary-waterfall-value" style="--label-color:${bar.color}; --label-bottom:${waterfallScale(Math.max(bar.from, bar.to))}%;">${bar.value}</strong>
+            <span class="summary-waterfall-label">${bar.label}</span>
+          </div>
+        `).join("");
+        const waterfallConnectorStyle = (fromIndex, value) => {
+          const columnWidth = 100 / waterfallBars.length;
+          const barInset = 0.14;
+          const left = fromIndex * columnWidth + columnWidth * (1 - barInset);
+          const right = 100 - ((fromIndex + 1) * columnWidth + columnWidth * barInset);
+          return `--connector-left:${left}%; --connector-right:${right}%; --connector-bottom:${waterfallScale(value)}%;`;
+        };
+        const waterfallConnectorMarkup = [
+          [0, inputs.currentSavings],
+          [1, afterContributions],
+          [2, projection.endingBalance]
+        ].map(([fromIndex, value]) => `
+          <span class="summary-waterfall-connector" style="${waterfallConnectorStyle(fromIndex, value)}"></span>
+        `).join("");
 
         const improvementSentence = bestScenario && bestScenario.differenceFromBaseline > 0
           ? `${bestScenario.label}: ${formatSignedCurrency(bestScenario.differenceFromBaseline)} versus baseline.`
           : "No selected scenario improves the inflation-adjusted baseline.";
-        const gapLabel = projection.goalGap >= 0 ? "Projected surplus" : "Projected gap";
 
         els.summaryCopy.innerHTML = `
           <div class="summary-hero">
             <div>
               <span class="summary-kicker">FuturePath · Accumulation printout</span>
               <h3>Retirement savings summary</h3>
-              <p>Single-page view of the baseline projection, retirement goal, funding components, and best selected planning lever.</p>
             </div>
             <span class="summary-status-pill">${projection.trackStatus.label}</span>
           </div>
-          <div class="summary-metrics" aria-label="Accumulation summary metrics">
-            <div class="summary-metric"><span>At retirement</span><strong>${formatCurrency(projection.endingBalance)}</strong><em>Nominal projected balance</em></div>
-            <div class="summary-metric"><span>Today's dollars</span><strong>${formatCurrency(projection.realEndingBalance)}</strong><em>Inflation-adjusted value</em></div>
-            <div class="summary-metric"><span>${gapLabel}</span><strong>${formatSignedCurrency(projection.goalGap)}</strong><em>Against stated goal</em></div>
-            <div class="summary-metric"><span>Ongoing savings</span><strong>${formatCurrency(contributionTotal)}</strong><em>Client plus employer</em></div>
-            <div class="summary-metric"><span>Net growth</span><strong>${formatCurrency(projection.investmentGrowth)}</strong><em>After projected fees</em></div>
-            <div class="summary-metric"><span>Time horizon</span><strong>${yearsToRetirement} years</strong><em>${formatAge(inputs.currentAge)} to ${formatAge(inputs.retirementAge)}</em></div>
+          <div class="summary-flow-snapshot" aria-label="Accumulation summary snapshot">
+            <div class="summary-snapshot-grid">
+              <section class="summary-snapshot-panel" aria-label="Projected balance mix">
+                <h4>Projected balance mix</h4>
+                <div class="summary-panel-topline">
+                  <strong>${formatCurrency(projection.endingBalance)}</strong>
+                  <span>Age ${formatAge(inputs.retirementAge)}</span>
+                </div>
+                <div class="summary-stacked-bar" aria-hidden="true">${componentSegments}</div>
+                <div class="summary-mix-list">${componentMixRows}</div>
+              </section>
+              <section class="summary-snapshot-panel" aria-label="Goal progress">
+                <h4>Goal progress</h4>
+                <div class="summary-panel-topline">
+                  <strong>${formatCurrency(projection.realEndingBalance)}</strong>
+                  <span>${goalProgressLabel} of goal</span>
+                </div>
+                <div class="summary-coverage-meter" aria-hidden="true">
+                  <i style="--coverage-width:${goalProgress}%; --coverage-min:${goalProgress > 0 ? "8px" : "0"}"></i>
+                </div>
+                <div class="summary-coverage-meta">
+                  <span>Age ${formatAge(inputs.currentAge)}</span>
+                  <strong>${yearsToRetirement} years</strong>
+                  <span>Age ${formatAge(inputs.retirementAge)}</span>
+                </div>
+              </section>
+            </div>
+            <section class="summary-waterfall" aria-label="Projected accumulation bridge">
+              <div class="summary-waterfall-header">
+                <div>
+                  <h4>Projected Retirement Outlook</h4>
+                </div>
+                <strong>Goal ${formatCurrency(inputs.retirementGoalBalance)}</strong>
+              </div>
+              <div class="summary-waterfall-stage" style="--zero-line:${waterfallScale(0)}%; --need-line:${waterfallScale(inputs.retirementGoalBalance)}%;">
+                <div class="summary-waterfall-zero" aria-hidden="true"></div>
+                <div class="summary-waterfall-need" aria-hidden="true"><span>Goal</span></div>
+                <div class="summary-waterfall-connectors" aria-hidden="true">${waterfallConnectorMarkup}</div>
+                <div class="summary-waterfall-bars">${waterfallMarkup}</div>
+              </div>
+            </section>
           </div>
-          <h4 class="summary-section-title">Funding Notes</h4>
-          <p>The baseline uses the ${model.label} model and projects ${formatCurrency(contributionTotal)} of ongoing savings, ${formatCurrency(projection.investmentGrowth)} of net investment growth, and ${formatCurrency(projection.totalFeesPaid)} of estimated fees. ${improvementSentence}</p>
         `;
 
         const assumptions = [
@@ -7699,7 +8049,7 @@
           }
         ];
         if (els.balanceRangeMethod) {
-          els.balanceRangeMethod.textContent = `Planning range uses the same inputs with the expected return shifted up and down by ${formatPercentagePoints(range.offset)}, based on ${formatPercent(state.projection.model.volatility)} portfolio volatility. It is an illustrative sensitivity band, not a probability forecast.`;
+          els.balanceRangeMethod.textContent = `Planning ranges shift estimated returns up and down based on ${formatWholePercent(state.projection.model.volatility)} portfolio volatility.`;
         }
         state.charts.balance = upsertChart("balance-chart", state.charts.balance, "line", labels, datasets, {
           plugins: {
@@ -7707,7 +8057,7 @@
             tooltip: readableTooltip({
               title: items => `Age ${items[0]?.label || ""}`,
               label: context => `${context.dataset.tooltipLabel || context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
-              footer: () => "Range is a simple what-if, not a promise."
+              footer: () => "Values are estimates only."
             })
           },
           scales: moneyScales()
@@ -7724,7 +8074,7 @@
             backgroundColor: "#7ab7ff"
           },
           {
-            label: "Ongoing savings",
+            label: "Future contributions",
             data: rows.map(row => Math.round(row.totalClientContributions + row.totalEmployerMatch)),
             backgroundColor: "#f6c766"
           },
@@ -8123,6 +8473,10 @@
 
       function formatPercent(value) {
         return `${(Number(value) * 100).toFixed(1)}%`;
+      }
+
+      function formatWholePercent(value) {
+        return `${Math.round(Number(value) * 100)}%`;
       }
 
       function formatPercentagePoints(value) {
