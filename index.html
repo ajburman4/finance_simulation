@@ -260,6 +260,27 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .header-meter.contact-info {
+      display: grid;
+      justify-items: end;
+      gap: 3px;
+      padding-right: 2px;
+      text-align: right;
+    }
+
+    .header-meter.contact-info span {
+      color: var(--ink);
+      font-size: 0.82rem;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .header-meter.contact-info strong {
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
     .status-chip,
     .scenario-toggle,
     .button {
@@ -367,12 +388,45 @@
       -webkit-background-clip: text;
     }
 
+    #distribution-view .hero h1 {
+      max-width: 650px;
+      font-size: clamp(3.05rem, 5.2vw, 5.65rem);
+      line-height: 0.92;
+    }
+
+    #distribution-view .hero h1 span {
+      padding-bottom: 0.08em;
+    }
+
+    #distribution-view .hero-inner {
+      grid-template-columns: minmax(500px, 0.78fr) minmax(280px, 1.22fr);
+      gap: clamp(34px, 6vw, 92px);
+    }
+
     .hero-copy p {
       max-width: 590px;
       margin: 28px 0 0;
       color: var(--soft);
       font-size: clamp(1.02rem, 1.8vw, 1.26rem);
       line-height: 1.65;
+    }
+
+    .hero-text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 28px;
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+
+    .hero-text-link::after {
+      content: "";
+      width: 42px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--teal), transparent);
     }
 
     .hero-actions {
@@ -393,6 +447,29 @@
     .hero-visual {
       position: relative;
       min-height: 610px;
+    }
+
+    #distribution-view .hero-visual {
+      justify-self: end;
+      width: min(100%, 500px);
+      min-height: 390px;
+    }
+
+    #distribution-view .orbit-stage {
+      min-height: 390px;
+      transform: translateX(clamp(10px, 3vw, 42px));
+    }
+
+    #distribution-view .orbit-ring {
+      width: min(28vw, 340px);
+    }
+
+    #distribution-view .orbit-ring:nth-child(2) {
+      width: min(23vw, 280px);
+    }
+
+    #distribution-view .orbit-ring:nth-child(3) {
+      width: min(18vw, 220px);
     }
 
     .orbit-stage {
@@ -448,6 +525,21 @@
       border-radius: 50%;
       background: var(--teal);
       box-shadow: 0 0 24px var(--teal);
+    }
+
+    #distribution-view .orbit-stage::after {
+      content: "";
+      position: absolute;
+      width: min(18vw, 220px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(85, 230, 193, 0.2);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(85, 230, 193, 0.14), transparent 32%),
+        radial-gradient(circle at 50% 50%, transparent 0 58%, rgba(246, 199, 102, 0.08) 59% 60%, transparent 61%);
+      box-shadow: 0 0 80px rgba(85, 230, 193, 0.13);
+      animation: breathe 8s ease-in-out infinite;
+      z-index: 1;
     }
 
     .future-card {
@@ -1151,10 +1243,25 @@
     }
 
     .runway-zone-labels {
+      display: grid;
+      grid-template-columns: minmax(0, 60fr) minmax(0, 32fr) minmax(0, 8fr);
+      gap: 0;
       color: rgba(216, 239, 232, 0.7);
       font-size: 0.66rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+    }
+
+    .runway-zone-labels span {
+      text-align: center;
+    }
+
+    .runway-zone-labels span:first-child {
+      text-align: left;
+    }
+
+    .runway-zone-labels span:last-child {
+      text-align: right;
     }
 
     .runway-axis {
@@ -1871,7 +1978,7 @@
 
     .bucket-rate-field {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(96px, 0.7fr);
+      grid-template-columns: minmax(64px, 0.45fr) minmax(96px, 0.7fr);
       grid-template-areas:
         "unit input"
         "label input";
@@ -1906,12 +2013,14 @@
     .bucket-rate-field span {
       grid-area: label;
       align-self: start;
+      justify-self: center;
+      text-align: center;
     }
 
     .bucket-rate-field::after {
       content: "%";
       grid-area: unit;
-      justify-self: end;
+      justify-self: center;
       color: var(--teal);
       font-size: 1rem;
       font-weight: 900;
@@ -2023,8 +2132,8 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(220px, 0.36fr);
       gap: 18px;
-      align-items: stretch;
-      padding: 20px;
+      align-items: center;
+      padding: 16px;
       border: 1px solid rgba(85, 230, 193, 0.18);
       border-radius: 8px;
       background:
@@ -2034,7 +2143,7 @@
 
     .drawdown-thesis h4 {
       margin: 0;
-      font-size: clamp(1.45rem, 2.8vw, 2.6rem);
+      font-size: clamp(1.34rem, 2.35vw, 2.12rem);
       line-height: 1.04;
       letter-spacing: 0;
       text-wrap: balance;
@@ -2052,7 +2161,7 @@
       display: grid;
       align-content: center;
       gap: 8px;
-      min-height: 138px;
+      min-height: 104px;
       padding: 16px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
@@ -2881,29 +2990,54 @@
 
     #distribution-scenario-content .sensitivity-sandbox .panel-body {
       display: grid;
-      grid-template-columns: minmax(250px, 0.74fr) minmax(0, 1.26fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
       align-items: stretch;
     }
 
     #distribution-scenario-content .sensitivity-outcome {
       margin-bottom: 0;
-      align-content: center;
-      min-height: 100%;
+      align-content: start;
+      grid-template-columns: 1fr;
+      min-height: 164px;
     }
 
     #distribution-scenario-content .sensitivity-outcome strong {
-      font-size: clamp(1.42rem, 2.5vw, 2.12rem);
+      font-size: clamp(1.34rem, 2vw, 1.74rem);
+      line-height: 1.08;
+    }
+
+    #distribution-scenario-content .sensitivity-outcome .outcome-badge {
+      justify-self: center;
+      width: min(82%, 190px);
+      min-width: 0;
+      margin-top: 4px;
     }
 
     #distribution-scenario-content .sensitivity-controls {
+      display: contents;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
     #distribution-scenario-content .sensitivity-control {
-      min-height: 138px;
+      min-height: 164px;
       align-content: start;
+    }
+
+    .sensitivity-section-impact {
+      grid-column: 1 / -1;
+      margin: -2px 0 0;
+      padding: 13px 15px;
+      border: 1px solid rgba(85, 230, 193, 0.16);
+      border-radius: 8px;
+      color: rgba(216, 239, 232, 0.78);
+      background:
+        linear-gradient(135deg, rgba(85, 230, 193, 0.09), rgba(246, 199, 102, 0.06)),
+        rgba(255, 255, 255, 0.035);
+      font-size: 0.92rem;
+      font-weight: 740;
+      line-height: 1.48;
     }
 
     #distribution-scenario-content .risk-ladder-panel .panel-body {
@@ -2918,7 +3052,14 @@
     #distribution-scenario-content .risk-ladder li {
       grid-template-columns: minmax(0, 1fr);
       align-content: start;
+      min-height: 342px;
       padding: 14px;
+    }
+
+    #distribution-scenario-content .risk-ladder li > div {
+      display: grid;
+      grid-template-rows: auto minmax(74px, 1fr) auto auto;
+      height: 100%;
     }
 
     #distribution-scenario-content .risk-ladder li::before {
@@ -2927,10 +3068,12 @@
 
     #distribution-scenario-content .risk-item-top {
       align-items: flex-start;
+      min-height: 46px;
     }
 
     #distribution-scenario-content .risk-impact {
       max-width: 48%;
+      min-width: 84px;
       font-size: 0.76rem;
     }
 
@@ -2944,6 +3087,11 @@
       grid-template-columns: 1fr;
       gap: 7px;
       margin-top: 10px;
+      align-self: end;
+    }
+
+    #distribution-scenario-content .risk-meter {
+      align-self: end;
     }
 
     .summary-layout {
@@ -2968,6 +3116,24 @@
     .summary-card .panel-header,
     .summary-card .panel-body {
       border-color: rgba(20, 32, 30, 0.14);
+    }
+
+    .summary-card .panel-header .button {
+      margin-top: 12px;
+    }
+
+    .summary-side-stack {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .summary-side-stack > .button {
+      justify-self: stretch;
+      min-height: 44px;
+      color: var(--paper-ink);
+      border-color: rgba(20, 32, 30, 0.16);
+      background: rgba(255, 255, 255, 0.72);
     }
 
     .summary-copy {
@@ -3071,6 +3237,146 @@
       font-size: 0.78rem;
       font-style: normal;
       line-height: 1.35;
+    }
+
+    .summary-concept-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .summary-concept-flow article {
+      position: relative;
+      min-height: 108px;
+      padding: 13px;
+      border: 1px solid rgba(20, 32, 30, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .summary-concept-flow article:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -13px;
+      width: 16px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(20, 32, 30, 0.42);
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .summary-concept-flow span {
+      display: block;
+      color: #65716d;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .summary-concept-flow strong {
+      display: block;
+      margin-top: 9px;
+      color: var(--paper-ink);
+      font-size: clamp(1rem, 1.6vw, 1.36rem);
+      line-height: 1.08;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-concept-flow p {
+      margin: 8px 0 0;
+      color: #64736f;
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .summary-bucket-chart {
+      display: grid;
+      gap: 11px;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid rgba(20, 32, 30, 0.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(85, 230, 193, 0.11), rgba(122, 183, 255, 0.06) 48%, rgba(246, 199, 102, 0.1)),
+        rgba(255, 255, 255, 0.46);
+    }
+
+    .summary-chart-row {
+      display: grid;
+      grid-template-columns: minmax(92px, 0.34fr) minmax(0, 1fr) minmax(104px, auto);
+      gap: 10px;
+      align-items: center;
+      min-height: 32px;
+    }
+
+    .summary-chart-row > span {
+      color: #65716d;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .summary-chart-row > strong {
+      color: var(--paper-ink);
+      font-size: 0.9rem;
+      font-weight: 900;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-bar-track,
+    .summary-stacked-bar {
+      height: 18px;
+      border: 1px solid rgba(20, 32, 30, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(20, 32, 30, 0.08);
+    }
+
+    .summary-bar-track i,
+    .summary-stacked-bar i {
+      display: block;
+      height: 100%;
+      min-width: var(--bar-min, 0);
+      width: var(--bar-width, 0%);
+      background: var(--bar-color, #55e6c1);
+    }
+
+    .summary-stacked-bar {
+      display: flex;
+    }
+
+    .summary-stacked-bar i {
+      flex: 0 0 var(--bar-width, 0%);
+      width: auto;
+    }
+
+    .summary-chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding-top: 4px;
+      color: #64736f;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .summary-chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-chart-legend i {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--legend-color, #55e6c1);
     }
 
     .summary-section-title {
@@ -3189,6 +3495,24 @@
         min-height: 500px;
       }
 
+      #distribution-view .hero-visual,
+      #distribution-view .orbit-stage {
+        min-height: 390px;
+      }
+
+      #distribution-view .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      #distribution-view .hero-visual {
+        justify-self: center;
+        width: 100%;
+      }
+
+      #distribution-view .orbit-stage {
+        transform: none;
+      }
+
       .metric-grid,
       .tranche-strip,
       .runway-stats {
@@ -3281,6 +3605,23 @@
       #distribution-content .chart-grid {
         grid-template-columns: 1fr;
       }
+
+      .summary-concept-flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .summary-chart-row {
+        grid-template-columns: minmax(86px, 0.32fr) minmax(0, 1fr);
+      }
+
+      .summary-chart-row > strong {
+        grid-column: 2;
+        text-align: left;
+      }
+
+      .summary-concept-flow article:not(:last-child)::after {
+        display: none;
+      }
     }
 
     @media (max-width: 720px) {
@@ -3347,6 +3688,23 @@
 
       .orbit-ring:nth-child(3) {
         width: min(72vw, 280px);
+      }
+
+      #distribution-view .hero-visual,
+      #distribution-view .orbit-stage {
+        min-height: 320px;
+      }
+
+      #distribution-view .orbit-ring {
+        width: min(84vw, 320px);
+      }
+
+      #distribution-view .orbit-ring:nth-child(2) {
+        width: min(68vw, 260px);
+      }
+
+      #distribution-view .orbit-ring:nth-child(3) {
+        width: min(52vw, 210px);
       }
 
       .future-card {
@@ -3432,6 +3790,7 @@
       .form-grid,
       .metric-grid,
       .summary-metrics,
+      .summary-concept-flow,
       .data-strip,
       .annual-components,
       .tranche-strip,
@@ -3666,6 +4025,38 @@
         font-size: 7pt;
       }
 
+      .summary-bucket-chart {
+        gap: 0.06in;
+        margin-top: 0.08in;
+        padding: 0.08in;
+        border-radius: 0;
+        background: #f7f5ee;
+      }
+
+      .summary-chart-row {
+        grid-template-columns: minmax(0.78in, 0.34fr) minmax(0, 1fr) minmax(0.8in, auto);
+        gap: 0.06in;
+        min-height: 0.18in;
+      }
+
+      .summary-chart-row > span {
+        font-size: 6.2pt;
+      }
+
+      .summary-chart-row > strong {
+        font-size: 7.1pt;
+      }
+
+      .summary-bar-track,
+      .summary-stacked-bar {
+        height: 0.12in;
+      }
+
+      .summary-chart-legend {
+        gap: 0.04in 0.1in;
+        font-size: 6.5pt;
+      }
+
       .summary-section-title {
         margin: 0.09in 0 0.05in;
         font-size: 6.8pt;
@@ -3711,7 +4102,7 @@
       </span>
       <span class="brand-title">
         <strong>FuturePath</strong>
-        <span>Simulation</span>
+        <span>Reaching your tomorrow</span>
       </span>
     </a>
 
@@ -3727,12 +4118,9 @@
       <a href="#summary" data-section="summary">Summary</a>
     </nav>
 
-    <div class="header-meter" aria-live="polite">
-      <div>
-        <span>At retirement</span>
-        <strong data-metric="endingBalance">$0</strong>
-      </div>
-      <strong class="status-chip" id="header-status">On track</strong>
+    <div class="header-meter contact-info">
+      <span>Brian Burman</span>
+      <strong><a href="mailto:brian@expandfg.com">brian@expandfg.com</a></strong>
     </div>
   </header>
 
@@ -3990,10 +4378,10 @@
                   <strong id="accumulationSensitivityReturnsValue">No change</strong>
                   <input id="accumulationSensitivityReturns" type="range" min="-2" max="2" step="0.25" value="0" data-accumulation-sensitivity="returns">
                   <small>Tests market assumption sensitivity.</small>
-                </label>
-              </div>
-            </div>
-          </section>
+	                </label>
+	              </div>
+	            </div>
+	          </section>
 
           <section class="panel risk-ladder-panel">
             <div class="panel-header">
@@ -4054,23 +4442,9 @@
       <section class="hero" aria-labelledby="distribution-hero-title">
         <div class="hero-inner">
           <div class="hero-copy reveal in-view">
-            <h1 id="distribution-hero-title">Turn retirement income into a <span>drawdown story.</span></h1>
-            <p>Stage assets into three time buckets and show how income is funded over time.</p>
-            <div class="hero-actions">
-              <a class="button primary" href="#distribution-accounts">
-                Start drawdown
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M12 5v14m0 0 6-6m-6 6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </a>
-              <button class="button ghost" id="distribution-print-button" type="button">
-                Print summary
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <span class="live-note">Coverage: <strong data-distribution-metric="coverageAge">Age 0</strong></span>
-            </div>
+            <h1 id="distribution-hero-title">How can we <span>fund your goals?</span></h1>
+            <p>Three buckets pay for your needs today while serving your long-term goals.</p>
+            <a class="hero-text-link" href="#distribution-accounts">Let's get started</a>
           </div>
 
           <div class="hero-visual no-print" aria-hidden="true">
@@ -4078,15 +4452,6 @@
               <div class="orbit-ring"><span class="orbit-dot"></span></div>
               <div class="orbit-ring"><span class="orbit-dot"></span></div>
               <div class="orbit-ring"><span class="orbit-dot"></span></div>
-              <article class="future-card">
-                <h2>Distribution coverage</h2>
-                <div class="future-balance" data-distribution-metric="coverageAge">Age 0</div>
-                <div class="sparkline" id="distribution-sparkline"></div>
-                <div class="future-meta">
-                  <div><span>Total gap</span><strong data-distribution-metric="totalGap">$0</strong></div>
-                  <div><span>Total need</span><strong data-distribution-metric="totalNeed">$0</strong></div>
-                </div>
-              </article>
             </div>
           </div>
         </div>
@@ -4099,7 +4464,7 @@
           <div class="section-number">01</div>
           <div>
             <h2 id="distribution-accounts-title">Add the assets.</h2>
-            <p>Enter assets, withdrawal need, inflation, and bucket return assumptions.</p>
+            <p>What do we have today?</p>
           </div>
         </div>
 
@@ -4107,7 +4472,6 @@
           <section class="panel reveal" aria-labelledby="distribution-inputs-title">
             <div class="panel-header">
               <h2 id="distribution-inputs-title">Distribution inputs</h2>
-              <p>Saved locally in this browser.</p>
             </div>
             <div class="panel-body">
               <form id="distribution-form" class="form-grid planning-form distribution-form">
@@ -4155,8 +4519,7 @@
 
             <section class="panel" aria-labelledby="tranche-path-title">
               <div class="panel-header">
-                <h3 id="tranche-path-title">Bucket allocation engine</h3>
-                <p>Starting allocation and return assumptions.</p>
+                <h3 id="tranche-path-title">What are the buckets?</h3>
               </div>
               <div class="panel-body">
                 <div class="drawdown-formula" aria-label="Annual drawdown formula">
@@ -4177,7 +4540,7 @@
                   </li>
                   <li>
                     <span>Bucket 2</span>
-                    <strong>Years 3-7 · Next five years of need</strong>
+                    <strong>Years 3-7 · Next five years</strong>
                     <label class="bucket-rate-field" for="distributionBucket2Return">
                       <input id="distributionBucket2Return" name="bucket2Return" type="text" inputmode="decimal" autocomplete="off" data-format="percent" form="distribution-form">
                       <span>Return</span>
@@ -4202,8 +4565,8 @@
         <div class="section-intro reveal">
           <div class="section-number">02</div>
           <div>
-            <h2 id="distribution-drawdown-title">Follow the drawdown.</h2>
-            <p>Track income, growth, refills, and remaining assets by year.</p>
+            <h2 id="distribution-drawdown-title">Model the drawdown.</h2>
+            <p>How does your money flow?</p>
           </div>
         </div>
 
@@ -4213,7 +4576,7 @@
 
           <div class="chart-grid distribution-visual-grid reveal">
             <section class="chart-panel distribution-stack-panel">
-              <h3>Bucket composition over time <span>Stacked balances</span></h3>
+              <h3>Bucket composition over time</h3>
               <div class="chart-wrap"><canvas id="distribution-portfolio-stack-chart"></canvas></div>
               <div class="chart-fallback" data-fallback="distribution-portfolio-stack">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
             </section>
@@ -4234,7 +4597,7 @@
         <div class="section-intro reveal">
           <div class="section-number">03</div>
           <div>
-            <h2 id="distribution-scenarios-title">Test the pressure points.</h2>
+            <h2 id="distribution-scenarios-title">What can change?</h2>
             <p>Compare spending, inflation, and return changes against the baseline.</p>
           </div>
         </div>
@@ -4245,7 +4608,6 @@
             <div class="panel-header sensitivity-header">
               <div>
                 <h3>Sensitivity sandbox</h3>
-                <p>Compare active levers with the baseline.</p>
               </div>
               <button class="button subtle-button" type="button" id="distribution-sensitivity-reset">Reset</button>
             </div>
@@ -4261,23 +4623,23 @@
                 <label class="sensitivity-control" for="distributionSensitivityInflation">
                   <span>Inflation</span>
                   <strong id="distributionSensitivityInflationValue">No change</strong>
-                  <input id="distributionSensitivityInflation" type="range" min="-1" max="2" step="0.25" value="0" data-sensitivity="inflation">
+                  <input id="distributionSensitivityInflation" type="range" min="-2" max="2" step="0.25" value="0" data-sensitivity="inflation">
                   <small>Changes future withdrawal growth.</small>
                 </label>
                 <label class="sensitivity-control" for="distributionSensitivityReturns">
                   <span>Investment returns</span>
                   <strong id="distributionSensitivityReturnsValue">No change</strong>
-                  <input id="distributionSensitivityReturns" type="range" min="-3" max="2" step="0.25" value="0" data-sensitivity="returns">
+                  <input id="distributionSensitivityReturns" type="range" min="-3" max="3" step="0.25" value="0" data-sensitivity="returns">
                   <small>Applies to all three buckets.</small>
-                </label>
-              </div>
-            </div>
-          </section>
+	                </label>
+	              </div>
+	              <p class="sensitivity-section-impact" id="distribution-sensitivity-impact"></p>
+	            </div>
+	          </section>
 
           <section class="panel risk-ladder-panel reveal">
             <div class="panel-header">
               <h3>Change breakdown</h3>
-              <p>Isolated levers plus combined result.</p>
             </div>
             <div class="panel-body">
               <ol class="risk-ladder" id="distribution-risk-ladder"></ol>
@@ -4290,8 +4652,8 @@
         <div class="section-intro reveal">
           <div class="section-number">04</div>
           <div>
-            <h2 id="distribution-summary-title">Print the drawdown summary.</h2>
-            <p>A concise, deterministic summary keeps the account inputs, withdrawal assumptions, and coverage result clear.</p>
+            <h2 id="distribution-summary-title">Print the summary.</h2>
+            <p>Inputs, assumptions, and your results.</p>
           </div>
         </div>
 
@@ -4299,20 +4661,26 @@
           <section class="summary-card reveal">
             <div class="panel-header">
               <h2>Distribution summary</h2>
-              <p>Generated from the active inputs and selected scenarios.</p>
             </div>
             <div class="panel-body summary-copy" id="distribution-summary-copy"></div>
           </section>
 
-          <aside class="summary-card reveal">
-            <div class="panel-header">
-              <h3>Assumptions</h3>
-              <p>Illustrative inputs, not a recommendation.</p>
-            </div>
-            <div class="panel-body">
-              <ul class="assumption-list" id="distribution-assumption-list"></ul>
-            </div>
-          </aside>
+          <div class="summary-side-stack reveal">
+            <button class="button ghost no-print" id="distribution-print-button" type="button">
+              Print summary
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <aside class="summary-card">
+              <div class="panel-header">
+                <h3>Assumptions</h3>
+              </div>
+              <div class="panel-body">
+                <ul class="assumption-list" id="distribution-assumption-list"></ul>
+              </div>
+            </aside>
+          </div>
         </div>
 
         <div class="disclaimer reveal">
@@ -4394,6 +4762,10 @@
         bucket2Return: "distributionBucket2Return",
         bucket3Return: "distributionBucket3Return"
       };
+
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
 
       const distributionScenarioPresets = [
         { id: "baseline", label: "Baseline", apply: inputs => ({ ...inputs }) },
@@ -4480,6 +4852,7 @@
         distributionSensitivityControls: document.getElementById("distribution-sensitivity-controls"),
         distributionSensitivityReset: document.getElementById("distribution-sensitivity-reset"),
         distributionSensitivityOutcome: document.getElementById("distribution-sensitivity-outcome"),
+        distributionSensitivityImpact: document.getElementById("distribution-sensitivity-impact"),
         distributionSensitivityValues: {
           spending: document.getElementById("distributionSensitivitySpendingValue"),
           inflation: document.getElementById("distributionSensitivityInflationValue"),
@@ -4532,7 +4905,8 @@
         setActiveTab(getInitialTab(), { scroll: false });
         recalculate();
         recalculateDistribution();
-        handleInitialHash();
+        handleInitialHash({ scroll: false });
+        resetInitialScrollPosition();
       }
 
       function populatePortfolioSelect() {
@@ -4640,6 +5014,7 @@
           if (!window.Chart) showChartFallbacks();
           recalculate();
           recalculateDistribution();
+          resetInitialScrollPosition();
           updateScrollProgress();
         });
 
@@ -4675,13 +5050,27 @@
         return window.location.hash.startsWith("#distribution") ? "distribution" : "accumulation";
       }
 
-      function handleInitialHash() {
+      function handleInitialHash(options = {}) {
         const targetId = window.location.hash.slice(1);
         if (!targetId) return;
         activateTabForTarget(targetId, { scroll: false });
+        if (options.scroll === false) return;
         window.requestAnimationFrame(() => scrollToTarget(targetId, { updateHash: false, instant: true }));
         window.setTimeout(() => scrollToTarget(targetId, { updateHash: false, instant: true }), 180);
         window.setTimeout(() => scrollToTarget(targetId, { updateHash: false, instant: true }), 460);
+      }
+
+      function resetInitialScrollPosition() {
+        const scrollTop = () => {
+          window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          updateScrollProgress();
+        };
+
+        scrollTop();
+        window.requestAnimationFrame(scrollTop);
+        window.setTimeout(scrollTop, 120);
+        window.setTimeout(scrollTop, 360);
+        window.setTimeout(scrollTop, 720);
       }
 
       function activateTabForTarget(targetId, options = {}) {
@@ -4767,6 +5156,8 @@
       }
 
       function updateHeaderForActiveTab() {
+        if (!els.headerMeterValue || !els.headerStatus) return;
+
         if (state.activeTab === "distribution") {
           const metricMap = state.distributionProjection
             ? buildDistributionMetricMap(state.distributionProjection, state.distributionInputs)
@@ -5380,12 +5771,32 @@
         const midTarget = Math.min(Math.max(totalAssets - shortTarget, 0), midTargetNeed);
         const longTarget = Math.max(totalAssets - shortTarget - midTarget, 0);
         const bucketBalances = [shortTarget, midTarget, longTarget];
-        const refillShort = Math.max(0, shortTarget - postGrowthBalances[0]);
-        const refillMid = Math.max(0, midTarget - postGrowthBalances[1]);
+        let cashBalance = postGrowthBalances[0];
+        let reserveBalance = postGrowthBalances[1];
+        let growthBalance = postGrowthBalances[2];
+
+        let shortRefillNeed = Math.max(0, shortTarget - cashBalance);
+        const reserveToShort = Math.min(shortRefillNeed, reserveBalance);
+        cashBalance += reserveToShort;
+        reserveBalance -= reserveToShort;
+        shortRefillNeed -= reserveToShort;
+
+        const growthToShort = Math.min(shortRefillNeed, growthBalance);
+        cashBalance += growthToShort;
+        growthBalance -= growthToShort;
+
+        const reserveRefillNeed = Math.max(0, midTarget - reserveBalance);
+        const growthToReserve = Math.min(reserveRefillNeed, growthBalance);
+        reserveBalance += growthToReserve;
+        growthBalance -= growthToReserve;
+
+        const refillShort = reserveToShort + growthToShort;
+        const refillMid = growthToReserve;
         const refillParts = [];
 
-        if (refillMid > 0.01) refillParts.push(`${distributionBucketLabels[2]} -> ${distributionBucketLabels[1]} ${formatCurrency(refillMid)}`);
-        if (refillShort > 0.01) refillParts.push(`${distributionBucketLabels[1]} -> ${distributionBucketLabels[0]} ${formatCurrency(refillShort)}`);
+        if (reserveToShort > 0.01) refillParts.push(`${distributionBucketLabels[1]} -> ${distributionBucketLabels[0]} ${formatCurrency(reserveToShort)}`);
+        if (growthToShort > 0.01) refillParts.push(`${distributionBucketLabels[2]} -> ${distributionBucketLabels[0]} ${formatCurrency(growthToShort)}`);
+        if (growthToReserve > 0.01) refillParts.push(`${distributionBucketLabels[2]} -> ${distributionBucketLabels[1]} ${formatCurrency(growthToReserve)}`);
 
         return {
           bucketBalances,
@@ -5536,7 +5947,7 @@
         const degrees = Math.min(360, Math.max(0, projection.goalProgress * 360));
         els.goalRing.style.setProperty("--progress", `${degrees}deg`);
         els.goalPercent.textContent = `${percent}%`;
-        [els.trackStatus, els.headerStatus].forEach(el => {
+        [els.trackStatus, els.headerStatus].filter(Boolean).forEach(el => {
           el.textContent = projection.trackStatus.label;
           el.className = `status-chip ${projection.trackStatus.key === "close" ? "close" : ""} ${projection.trackStatus.key === "behind" ? "behind" : ""}`.trim();
         });
@@ -5609,6 +6020,7 @@
       }
 
       function renderDistributionSparkline(projection) {
+        if (!els.distributionSparkline) return;
         const rows = projection.annualRows;
         if (!rows.length) {
           els.distributionSparkline.innerHTML = "";
@@ -5691,9 +6103,9 @@
             </div>
           </div>
           <div class="runway-stats">
-            <div class="runway-stat"><span>First-year need</span><strong>${formatCurrency(projection.annualNeedStart)}</strong><small>Inflates annually</small></div>
-            <div class="runway-stat"><span>Starting assets</span><strong>${formatCurrency(projection.startingAssets)}</strong><small>Before projected growth</small></div>
-            <div class="runway-stat"><span>Funded years</span><strong>${Math.min(fundedYears, requestedYears)} of ${requestedYears}</strong><small>Modeled retirement income</small></div>
+            <div class="runway-stat"><span>First-year need</span><strong>${formatCurrency(projection.annualNeedStart)}</strong></div>
+            <div class="runway-stat"><span>Starting assets</span><strong>${formatCurrency(projection.startingAssets)}</strong></div>
+            <div class="runway-stat"><span>Funded years</span><strong>${Math.min(fundedYears, requestedYears)} of ${requestedYears}</strong></div>
           </div>
         `;
       }
@@ -5708,14 +6120,13 @@
             <strong>${formatCurrency(value || 0)}</strong>
           </div>
         `).join("");
-        const card = (label, value, detail, color, extra = "") => {
+        const card = (label, value, color, extra = "") => {
           const share = Math.max(value > 0 ? 4 : 0, Math.min(100, Math.round((Math.abs(value) / bridgeMax) * 100)));
           return `
             <article class="bridge-card" style="--bridge-color:${color}; --bridge-share:${share}%; --bridge-min:${share > 0 ? "16px" : "0"}">
               <span>${label}</span>
               <strong>${formatCurrency(value)}</strong>
               <i aria-hidden="true"></i>
-              <small>${detail}</small>
               ${extra}
             </article>
           `;
@@ -5725,7 +6136,7 @@
           <div class="portfolio-story-header">
             <div>
               <div class="portfolio-story-kicker">Portfolio bridge</div>
-              <h3>Growth replenishes spending and leaves ${formatCurrency(projection.endingAssets)}.</h3>
+              <h3>How does investment growth fund your income?</h3>
             </div>
             <div class="runway-status">
               <span>Unmet need</span>
@@ -5733,13 +6144,13 @@
             </div>
           </div>
           <div class="portfolio-equation" aria-label="Starting assets plus projected growth less income paid equals ending assets">
-            ${card("Starting assets", projection.startingAssets, "Client assets entered today", "var(--blue)")}
+            ${card("Starting assets", projection.startingAssets, "var(--blue)")}
             <div class="equation-operator">+</div>
-            ${card("Projected growth", projection.totalGrowth, "Broken out by bucket below", "var(--gold)", `<div class="bridge-breakout">${growthBreakout}</div>`)}
+            ${card("Projected growth", projection.totalGrowth, "var(--gold)", `<div class="bridge-breakout">${growthBreakout}</div>`)}
             <div class="equation-operator minus">-</div>
-            ${card("Income paid", projection.totalFunded, `${formatCurrency(projection.totalNeed)} requested`, "var(--coral)")}
+            ${card("Income paid", projection.totalFunded, "var(--coral)")}
             <div class="equation-operator">=</div>
-            ${card("Ending assets", projection.endingAssets, "After the final planned withdrawal", "var(--teal)")}
+            ${card("Ending assets", projection.endingAssets, "var(--teal)")}
           </div>
         `;
       }
@@ -5751,9 +6162,6 @@
           state.charts.distributionNeed.destroy();
           state.charts.distributionNeed = null;
         }
-        const { growthTotals, refillTotals } = getDistributionBucketTotals(projection);
-        const totalRefill = (refillTotals[0] || 0) + (refillTotals[1] || 0);
-        const maxGrowthBucketIndex = growthTotals.reduce((maxIndex, value, index, list) => value > list[maxIndex] ? index : maxIndex, 0);
 
         els.distributionRefillCascade.innerHTML = `
           <div class="refill-header">
@@ -5762,18 +6170,13 @@
               <h3>Components over time.</h3>
             </div>
             <div class="runway-status">
-              <span>Total refill</span>
-              <strong>${formatCurrency(totalRefill)}</strong>
+              <span>Income Paid</span>
+              <strong>${formatCurrency(projection.totalFunded)}</strong>
             </div>
           </div>
           <div class="refill-components">
             <div class="chart-wrap"><canvas id="distribution-need-chart"></canvas></div>
-            <div class="chart-fallback" data-fallback="distribution-need">Charts are unavailable because Chart.js did not load. Refill totals still work.</div>
-            <div class="component-stat-row">
-              <div class="component-stat"><span>Income paid</span><strong>${formatCurrency(projection.totalFunded)}</strong></div>
-              <div class="component-stat"><span>Refill activity</span><strong>${formatCurrency(totalRefill)}</strong></div>
-              <div class="component-stat"><span>Largest growth bucket</span><strong>${distributionBucketLabels[maxGrowthBucketIndex]}</strong></div>
-            </div>
+            <div class="chart-fallback" data-fallback="distribution-need">Charts are unavailable because Chart.js did not load. Income totals still work.</div>
           </div>
         `;
       }
@@ -5809,7 +6212,7 @@
           {
             label: "Starting assets",
             value: projection.startingAssets,
-            note: "What the client enters across taxable, retirement, and Roth accounts.",
+            note: "What we have today.",
             color: "var(--blue)"
           },
           {
@@ -5821,7 +6224,7 @@
           {
             label: "Income paid",
             value: projection.totalFunded,
-            note: "Total withdrawals sent to the client over the retirement horizon.",
+            note: "What we get paid.",
             className: "withdrawal",
             color: "var(--coral)"
           },
@@ -5869,7 +6272,6 @@
           <section class="drawdown-thesis">
             <div>
               <h4>${headline}</h4>
-              <p>Read it left to right: assets start in the three buckets, each bucket grows, income is paid from Bucket 1, and annual refills move assets back toward the next two years of spending.</p>
             </div>
             <div class="runway-badge">
               <span>Coverage runway</span>
@@ -6119,7 +6521,7 @@
         els.accumulationSensitivityOutcome.classList.toggle("has-gap", sandboxProjection.goalGap < 0);
         els.accumulationSensitivityOutcome.innerHTML = `
           <div>
-            <span>Sandbox result</span>
+            <span>Result</span>
             <strong>${formatCurrency(sandboxProjection.endingBalance)}</strong>
           </div>
           <div class="outcome-badge">${statusLabel}</div>
@@ -6336,12 +6738,14 @@
         els.distributionSensitivityOutcome.classList.toggle("has-gap", !sandboxProjection.coverageComplete);
         els.distributionSensitivityOutcome.innerHTML = `
           <div>
-            <span>Sandbox result</span>
+            <span>Result</span>
             <strong>${coverageText}</strong>
           </div>
           <div class="outcome-badge">${statusLabel}</div>
-          <p>${comparisonText} Projected gap/surplus is ${formatSignedCurrency(sandboxProjection.surplusGap)}.</p>
         `;
+        if (els.distributionSensitivityImpact) {
+          els.distributionSensitivityImpact.textContent = `${comparisonText} Projected gap/surplus is ${formatSignedCurrency(sandboxProjection.surplusGap)}.`;
+        }
 
         renderDistributionRiskLadder(baseline, sandboxProjection);
       }
@@ -6520,36 +6924,65 @@
       }
 
       function renderDistributionSummary(inputs, projection, scenarios) {
-        const pressureRows = scenarios
-          .filter(scenario => scenario.id !== "baseline")
-          .sort((a, b) => a.differenceFromBaseline - b.differenceFromBaseline)
-          .map(scenario => `
-            <li><span>${scenario.label}</span><strong>${formatSignedCurrency(scenario.differenceFromBaseline)}</strong></li>
-          `).join("") || "<li><span>Sensitivity ladder</span><strong>No alternate scenarios selected</strong></li>";
-        const coverageLabel = projection.coverageComplete
-          ? `Funds the full plan through age ${formatAge(inputs.planningEndAge)}`
-          : `Funding runs short near age ${formatAge(projection.coverageAge)}`;
         const gapLabel = projection.surplusGap >= 0 ? "Projected cushion" : "Projected gap";
+        const chartMax = Math.max(projection.startingAssets, projection.totalFunded, projection.endingAssets, 1);
+        const fundedYears = Math.max(0, Math.round(projection.coverageAge - projection.inputs.currentAge));
+        const requestedYears = Math.max(projection.horizonYears, 1);
+        const coveragePercent = Math.max(0, Math.min(100, Math.round((Math.min(fundedYears, requestedYears) / requestedYears) * 100)));
+        const barWidth = value => Math.max(value > 0 ? 4 : 0, Math.min(100, Math.round((value / chartMax) * 100)));
+        const bucketColors = ["#55e6c1", "#7ab7ff", "#f6c766"];
+        const startingSegments = projection.initialBuckets.map((bucket, index) => {
+          const share = projection.startingAssets > 0 ? (bucket.startingBalance / projection.startingAssets) * 100 : 0;
+          const width = Math.max(bucket.startingBalance > 0 ? 3 : 0, Math.min(100, share));
+          return `<i style="--bar-width:${width}%; --bar-color:${bucketColors[index]}"></i>`;
+        }).join("");
 
         els.distributionSummaryCopy.innerHTML = `
           <div class="summary-hero">
             <div>
               <span class="summary-kicker">FuturePath · Distribution printout</span>
               <h3>Drawdown summary</h3>
-              <p>Single-page view of account inputs, withdrawal demand, bucket funding, and coverage result.</p>
             </div>
             <span class="summary-status-pill">${projection.status.label}</span>
           </div>
           <div class="summary-metrics" aria-label="Distribution summary metrics">
-            <div class="summary-metric"><span>Coverage</span><strong>Age ${formatAge(projection.coverageAge)}</strong><em>${coverageLabel}</em></div>
-            <div class="summary-metric"><span>Starting assets</span><strong>${formatCurrency(projection.startingAssets)}</strong><em>Across entered accounts</em></div>
-            <div class="summary-metric"><span>${gapLabel}</span><strong>${formatSignedCurrency(projection.surplusGap)}</strong><em>${formatCurrency(projection.totalGap)} unmet gap</em></div>
-            <div class="summary-metric"><span>Total need</span><strong>${formatCurrency(projection.totalNeed)}</strong><em>Inflated withdrawals</em></div>
-            <div class="summary-metric"><span>Total funded</span><strong>${formatCurrency(projection.totalFunded)}</strong><em>Withdrawn from buckets</em></div>
-            <div class="summary-metric"><span>Ending assets</span><strong>${formatCurrency(projection.endingAssets)}</strong><em>Projected remainder</em></div>
+            <div class="summary-metric"><span>Coverage</span><strong>Age ${formatAge(projection.coverageAge)}</strong></div>
+            <div class="summary-metric"><span>Starting assets</span><strong>${formatCurrency(projection.startingAssets)}</strong></div>
+            <div class="summary-metric"><span>${gapLabel}</span><strong>${formatSignedCurrency(projection.surplusGap)}</strong></div>
+            <div class="summary-metric"><span>Total need</span><strong>${formatCurrency(projection.totalNeed)}</strong></div>
+            <div class="summary-metric"><span>Total funded</span><strong>${formatCurrency(projection.totalFunded)}</strong></div>
+            <div class="summary-metric"><span>Ending assets</span><strong>${formatCurrency(projection.endingAssets)}</strong></div>
           </div>
-          <h4 class="summary-section-title">Sensitivity Impact Versus Baseline</h4>
-          <ul class="assumption-list">${pressureRows}</ul>
+          <h4 class="summary-section-title">Bucket Flow Snapshot</h4>
+          <div class="summary-bucket-chart" aria-label="Bucket flow snapshot">
+            <div class="summary-chart-row">
+              <span>Assets today</span>
+              <div class="summary-stacked-bar" aria-hidden="true">${startingSegments}</div>
+              <strong>${formatCurrency(projection.startingAssets)}</strong>
+            </div>
+            <div class="summary-chart-row">
+              <span>Income paid</span>
+              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${barWidth(projection.totalFunded)}%; --bar-min:14px; --bar-color:#167a55"></i></div>
+              <strong>${formatCurrency(projection.totalFunded)}</strong>
+            </div>
+            <div class="summary-chart-row">
+              <span>Ending assets</span>
+              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${barWidth(projection.endingAssets)}%; --bar-min:14px; --bar-color:#2f5f9d"></i></div>
+              <strong>${formatCurrency(projection.endingAssets)}</strong>
+            </div>
+            <div class="summary-chart-row">
+              <span>Coverage</span>
+              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${coveragePercent}%; --bar-min:14px; --bar-color:#6f7a80"></i></div>
+              <strong>Age ${formatAge(projection.coverageAge)}</strong>
+            </div>
+            <div class="summary-chart-legend" aria-hidden="true">
+              <span><i style="--legend-color:#55e6c1"></i>Bucket 1</span>
+              <span><i style="--legend-color:#7ab7ff"></i>Bucket 2</span>
+              <span><i style="--legend-color:#f6c766"></i>Bucket 3</span>
+              <span><i style="--legend-color:#167a55"></i>Income paid</span>
+              <span><i style="--legend-color:#6f7a80"></i>Coverage</span>
+            </div>
+          </div>
         `;
 
         const assumptions = [
@@ -7298,6 +7731,8 @@
         assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[0], 200), "Rolling reset should refill Bucket 1 back to the next two years of need.");
         assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[1], 500), "Rolling reset should preserve the Bucket 2 target when assets are sufficient.");
         assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[2], 280), "Rolling reset should leave the remaining assets in Bucket 3.");
+        assert(nearlyEqual(bucketRouting.annualRows[0].refillMid, 56), "Bucket 3 should refill Bucket 2 after Bucket 2 sends cash to Bucket 1.");
+        assert(bucketRouting.annualRows[0].refillLabel.includes("Bucket 3 -> Bucket 2"), "Refill labels should explain the reserve-bucket top-up.");
         assert(bucketRouting.annualRows[1].sourceLabel === "Bucket 1", "Year 2 should still draw from the refilled Bucket 1.");
 
         const rollingRefill = calculateDistributionProjection({
