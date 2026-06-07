@@ -97,7 +97,10 @@
       text-decoration: none;
     }
 
-    .no-print {
+    *,
+    *::before,
+    *::after {
+      -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
@@ -3136,6 +3139,16 @@
       background: rgba(255, 255, 255, 0.72);
     }
 
+    #distribution-summary .summary-side-stack {
+      position: relative;
+      align-content: stretch;
+    }
+
+    #distribution-summary .summary-side-stack > .button {
+      position: absolute;
+      inset: -56px 0 auto 0;
+    }
+
     .summary-copy {
       color: #273b38;
       font-size: 1.04rem;
@@ -3379,6 +3392,273 @@
       background: var(--legend-color, #55e6c1);
     }
 
+    .print-only {
+      display: none;
+    }
+
+    .summary-flow-snapshot {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary-snapshot-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+      gap: 12px;
+    }
+
+    .summary-snapshot-panel {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid rgba(20, 32, 30, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .summary-snapshot-panel h4 {
+      margin: 0 0 10px;
+      color: var(--paper-ink);
+      font-size: 0.74rem;
+      font-weight: 950;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .summary-panel-topline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .summary-panel-topline strong {
+      color: var(--paper-ink);
+      font-size: 1.35rem;
+      line-height: 1.04;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-panel-topline span {
+      color: #64736f;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .summary-mix-list {
+      display: grid;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .summary-mix-list div {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 8px;
+      align-items: center;
+      color: #64736f;
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .summary-mix-list i {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 6px;
+      border-radius: 999px;
+      background: var(--mix-color, #55e6c1);
+    }
+
+    .summary-mix-list strong {
+      color: var(--paper-ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-coverage-meter {
+      height: 12px;
+      border: 1px solid rgba(20, 32, 30, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(20, 32, 30, 0.08);
+    }
+
+    .summary-coverage-meter i {
+      display: block;
+      width: var(--coverage-width, 0%);
+      height: 100%;
+      min-width: var(--coverage-min, 0);
+      background: linear-gradient(90deg, #55e6c1, #7ab7ff);
+    }
+
+    .summary-coverage-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 9px;
+      color: #64736f;
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .summary-coverage-meta strong {
+      color: var(--paper-ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-waterfall {
+      padding: 14px;
+      border: 1px solid rgba(20, 32, 30, 0.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(85, 230, 193, 0.1), rgba(122, 183, 255, 0.07) 48%, rgba(246, 199, 102, 0.1)),
+        rgba(255, 255, 255, 0.46);
+    }
+
+    .summary-waterfall-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .summary-waterfall-header h4 {
+      margin: 0 0 4px;
+      color: var(--paper-ink);
+      font-size: 0.74rem;
+      font-weight: 950;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .summary-waterfall-header p {
+      margin: 0;
+      color: #64736f;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .summary-waterfall-header strong {
+      color: var(--paper-ink);
+      font-size: 1.1rem;
+      line-height: 1.08;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-waterfall-stage {
+      position: relative;
+      height: 220px;
+      margin: 26px 0 34px;
+    }
+
+    .summary-waterfall-zero,
+    .summary-waterfall-need {
+      position: absolute;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+    }
+
+    .summary-waterfall-zero {
+      bottom: var(--zero-line, 0%);
+      border-top: 1px solid rgba(20, 32, 30, 0.26);
+      z-index: 0;
+    }
+
+    .summary-waterfall-need {
+      bottom: var(--need-line, 0%);
+      border-top: 2px dashed rgba(20, 32, 30, 0.38);
+      z-index: 5;
+    }
+
+    .summary-waterfall-need span {
+      position: absolute;
+      right: 0;
+      bottom: 4px;
+      color: #31536d;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .summary-waterfall-bars {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      height: 100%;
+    }
+
+    .summary-waterfall-connectors {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .summary-waterfall-connector {
+      position: absolute;
+      left: var(--connector-left, 0%);
+      right: var(--connector-right, 0%);
+      bottom: var(--connector-bottom, 0%);
+      border-top: 2px dotted rgba(20, 32, 30, 0.42);
+    }
+
+    .summary-waterfall-column {
+      position: relative;
+      min-width: 0;
+    }
+
+    .summary-waterfall-bar {
+      position: absolute;
+      left: 14%;
+      right: 14%;
+      bottom: var(--bar-bottom, 0%);
+      height: var(--bar-height, 0%);
+      min-height: var(--bar-min, 0);
+      border-radius: 7px 7px 2px 2px;
+      background: var(--bar-color, #167a55);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .summary-waterfall-bar.is-negative {
+      border-radius: 2px 2px 7px 7px;
+    }
+
+    .summary-waterfall-value,
+    .summary-waterfall-label {
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+
+    .summary-waterfall-value {
+      bottom: calc(var(--label-bottom, 0%) + var(--label-offset, 8px));
+      color: var(--label-color, var(--paper-ink));
+      font-size: 0.82rem;
+      font-weight: 950;
+      line-height: 1.12;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-waterfall-label {
+      top: calc(100% + 12px);
+      min-height: 28px;
+      color: #64736f;
+      font-size: 0.68rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
     .summary-section-title {
       margin: 18px 0 10px;
       color: var(--paper-ink);
@@ -3481,7 +3761,8 @@
       .story-grid,
       .chart-grid,
       .sensitivity-layout,
-      .summary-layout {
+      .summary-layout,
+      .summary-snapshot-grid {
         grid-template-columns: 1fr;
       }
 
@@ -3511,6 +3792,11 @@
 
       #distribution-view .orbit-stage {
         transform: none;
+      }
+
+      #distribution-summary .summary-side-stack > .button {
+        position: static;
+        inset: auto;
       }
 
       .metric-grid,
@@ -3860,8 +4146,8 @@
 
     @media print {
       @page {
-        size: Letter;
-        margin: 0.34in;
+        size: Letter landscape;
+        margin: 0.22in;
       }
 
       :root {
@@ -3876,13 +4162,22 @@
       body {
         background: #ffffff;
         color: #111111;
-        font-size: 9.5pt;
+        font-size: 10pt;
         line-height: 1.35;
+      }
+
+      body,
+      main,
+      .app {
+        margin: 0;
+        min-height: 0;
+        overflow: visible;
       }
 
       body::before,
       body::after,
       .no-print,
+      .no-print-title,
       .site-header,
       .scroll-progress,
       .hero,
@@ -3903,12 +4198,34 @@
         display: block !important;
       }
 
+      .print-only {
+        display: inline !important;
+      }
+
       .story-section {
+        display: block;
         width: 100%;
-        min-height: auto;
+        height: auto;
+        min-height: 0;
         padding: 0;
         margin: 0;
         scroll-margin-top: 0;
+        overflow: visible;
+      }
+
+      #summary,
+      #distribution-summary {
+        padding: 0;
+      }
+
+      #summary .summary-layout,
+      #distribution-summary .summary-layout {
+        height: auto;
+        min-height: 0;
+      }
+
+      .story-section:not(#summary):not(#distribution-summary) {
+        min-height: auto;
       }
 
       .story-section::before,
@@ -3919,39 +4236,66 @@
       }
 
       .summary-layout {
-        grid-template-columns: minmax(0, 1.13fr) minmax(2.25in, 0.87fr);
-        gap: 0.16in;
-        align-items: stretch;
+        grid-template-columns: minmax(0, 1.34fr) minmax(3.18in, 0.66fr);
+        gap: 0.18in;
+        align-items: start;
+        padding: 0.05in;
+        border: 1px solid rgba(20, 32, 30, 0.16);
+        border-radius: 0.14in;
+        background:
+          linear-gradient(135deg, rgba(85, 230, 193, 0.15), rgba(122, 183, 255, 0.1) 48%, rgba(246, 199, 102, 0.15)),
+          #dbe7ef;
         break-inside: avoid;
         page-break-inside: avoid;
       }
 
       .summary-card {
+        display: flex;
+        flex-direction: column;
         box-shadow: none;
         border: 1px solid rgba(20, 32, 30, 0.16);
-        border-radius: 0;
-        background: #ffffff;
+        border-radius: 0.08in;
+        background: rgba(245, 250, 255, 0.76);
         color: #14201e;
+        overflow: hidden;
         break-inside: avoid;
         page-break-inside: avoid;
       }
 
       .summary-card::before {
-        height: 3px;
+        height: 0.04in;
+      }
+
+      .summary-layout .summary-card,
+      .summary-side-stack {
+        height: auto;
+      }
+
+      .summary-side-stack {
+        gap: 0;
+      }
+
+      .summary-card .panel-body,
+      .summary-copy {
+        flex: 0 0 auto;
       }
 
       .panel-header,
       .panel-body {
-        padding: 0.13in 0.15in;
+        padding: 0.15in 0.16in;
+      }
+
+      #distribution-summary .summary-side-stack > .button {
+        display: none !important;
       }
 
       .summary-card .panel-header {
-        padding-bottom: 0.1in;
+        padding-bottom: 0.11in;
       }
 
       .summary-card .panel-header h2,
       .summary-card .panel-header h3 {
-        font-size: 10.5pt;
+        font-size: 13pt;
       }
 
       .summary-card .panel-header p {
@@ -3961,8 +4305,8 @@
       }
 
       .summary-copy {
-        font-size: 8.6pt;
-        line-height: 1.38;
+        font-size: 8.8pt;
+        line-height: 1.32;
       }
 
       .summary-copy p {
@@ -3970,18 +4314,18 @@
       }
 
       .summary-hero {
-        gap: 0.1in;
+        gap: 0.14in;
         margin-bottom: 0.12in;
         padding-bottom: 0.1in;
       }
 
       .summary-kicker {
         margin-bottom: 4px;
-        font-size: 6.7pt;
+        font-size: 7.2pt;
       }
 
       .summary-hero h3 {
-        font-size: 20pt;
+        font-size: 25pt;
         line-height: 0.98;
       }
 
@@ -3992,31 +4336,31 @@
       }
 
       .summary-status-pill {
-        min-height: 24px;
-        padding: 0 8px;
-        font-size: 7pt;
+        min-height: 0.29in;
+        padding: 0 0.12in;
+        font-size: 8pt;
       }
 
       .summary-metrics {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.07in;
-        margin-bottom: 0.12in;
+        gap: 0.1in;
+        margin-bottom: 0.16in;
       }
 
       .summary-metric {
         min-height: 0;
-        padding: 0.08in;
-        border-radius: 0;
-        background: #f7f5ee;
+        padding: 0.11in;
+        border-radius: 0.06in;
+        background: rgba(255, 255, 255, 0.5);
       }
 
       .summary-metric span {
         margin-bottom: 4px;
-        font-size: 6.4pt;
+        font-size: 6.9pt;
       }
 
       .summary-metric strong {
-        font-size: 12pt;
+        font-size: 15pt;
         line-height: 1.04;
       }
 
@@ -4026,51 +4370,142 @@
       }
 
       .summary-bucket-chart {
-        gap: 0.06in;
+        gap: 0.1in;
         margin-top: 0.08in;
-        padding: 0.08in;
-        border-radius: 0;
-        background: #f7f5ee;
+        padding: 0.12in;
+        border-radius: 0.06in;
+        background:
+          linear-gradient(135deg, rgba(85, 230, 193, 0.18), rgba(122, 183, 255, 0.11) 48%, rgba(246, 199, 102, 0.18)),
+          rgba(255, 255, 255, 0.46);
       }
 
       .summary-chart-row {
-        grid-template-columns: minmax(0.78in, 0.34fr) minmax(0, 1fr) minmax(0.8in, auto);
-        gap: 0.06in;
-        min-height: 0.18in;
+        grid-template-columns: minmax(1.05in, 0.25fr) minmax(0, 1fr) minmax(1.08in, auto);
+        gap: 0.1in;
+        min-height: 0.27in;
       }
 
       .summary-chart-row > span {
-        font-size: 6.2pt;
+        font-size: 7.1pt;
       }
 
       .summary-chart-row > strong {
-        font-size: 7.1pt;
+        font-size: 9.2pt;
       }
 
       .summary-bar-track,
       .summary-stacked-bar {
-        height: 0.12in;
+        height: 0.18in;
+        background: rgba(20, 32, 30, 0.1);
+      }
+
+      .summary-bar-track i {
+        min-width: var(--bar-min, 0.08in);
+      }
+
+      .summary-stacked-bar i {
+        min-width: var(--bar-min, 0);
       }
 
       .summary-chart-legend {
-        gap: 0.04in 0.1in;
-        font-size: 6.5pt;
+        gap: 0.05in 0.12in;
+        font-size: 7pt;
       }
 
       .summary-section-title {
-        margin: 0.09in 0 0.05in;
+        margin: 0.13in 0 0.07in;
+        font-size: 7.2pt;
+      }
+
+      .summary-flow-snapshot {
+        gap: 0.08in;
+        margin-top: 0.1in;
+      }
+
+      .summary-snapshot-grid {
+        gap: 0.09in;
+      }
+
+      .summary-snapshot-panel,
+      .summary-waterfall {
+        padding: 0.085in;
+        border-radius: 0.06in;
+        background: rgba(255, 255, 255, 0.48);
+      }
+
+      .summary-snapshot-panel h4,
+      .summary-waterfall-header h4 {
+        margin-bottom: 0.05in;
         font-size: 6.8pt;
       }
 
-      .assumption-list li {
-        padding: 0.045in 0;
+      .summary-panel-topline {
         gap: 0.08in;
-        font-size: 7.2pt;
-        line-height: 1.22;
+        margin-bottom: 0.06in;
+      }
+
+      .summary-panel-topline strong {
+        font-size: 12.5pt;
+      }
+
+      .summary-panel-topline span,
+      .summary-mix-list div,
+      .summary-coverage-meta,
+      .summary-waterfall-header p {
+        font-size: 7pt;
+      }
+
+      .summary-mix-list {
+        gap: 0.035in;
+        margin-top: 0.07in;
+      }
+
+      .summary-coverage-meter {
+        height: 0.1in;
+      }
+
+      .summary-waterfall-header {
+        gap: 0.1in;
+        margin-bottom: 0.06in;
+      }
+
+      .summary-waterfall-header strong {
+        font-size: 10pt;
+      }
+
+      .summary-waterfall-stage {
+        height: 1.46in;
+        margin: 0.16in 0 0.25in;
+      }
+
+      .summary-waterfall-bars {
+        gap: 0.08in;
+      }
+
+      .summary-waterfall-value {
+        font-size: 7.4pt;
+      }
+
+      .summary-waterfall-label {
+        top: calc(100% + 0.08in);
+        min-height: 0.22in;
+        font-size: 5.9pt;
+      }
+
+      .summary-waterfall-need span {
+        font-size: 6pt;
+      }
+
+      .assumption-list li {
+        padding: 0.075in 0;
+        gap: 0.1in;
+        font-size: 9.2pt;
+        line-height: 1.18;
       }
 
       .assumption-list strong {
-        max-width: 1.25in;
+        max-width: 1.82in;
+        font-size: 9.5pt;
       }
 
       .disclaimer {
@@ -4674,7 +5109,7 @@
             </button>
             <aside class="summary-card">
               <div class="panel-header">
-                <h3>Assumptions</h3>
+                <h3><span class="no-print-title">Assumptions</span><span class="print-only">Planning inputs</span></h3>
               </div>
               <div class="panel-body">
                 <ul class="assumption-list" id="distribution-assumption-list"></ul>
@@ -6924,18 +7359,101 @@
       }
 
       function renderDistributionSummary(inputs, projection, scenarios) {
-        const gapLabel = projection.surplusGap >= 0 ? "Projected cushion" : "Projected gap";
-        const chartMax = Math.max(projection.startingAssets, projection.totalFunded, projection.endingAssets, 1);
         const fundedYears = Math.max(0, Math.round(projection.coverageAge - projection.inputs.currentAge));
         const requestedYears = Math.max(projection.horizonYears, 1);
-        const coveragePercent = Math.max(0, Math.min(100, Math.round((Math.min(fundedYears, requestedYears) / requestedYears) * 100)));
-        const barWidth = value => Math.max(value > 0 ? 4 : 0, Math.min(100, Math.round((value / chartMax) * 100)));
+        const coveragePercent = Math.max(0, Math.min(100, (Math.min(fundedYears, requestedYears) / requestedYears) * 100));
+        const coveragePercentLabel = `${Math.round(coveragePercent)}%`;
         const bucketColors = ["#55e6c1", "#7ab7ff", "#f6c766"];
         const startingSegments = projection.initialBuckets.map((bucket, index) => {
           const share = projection.startingAssets > 0 ? (bucket.startingBalance / projection.startingAssets) * 100 : 0;
-          const width = Math.max(bucket.startingBalance > 0 ? 3 : 0, Math.min(100, share));
+          const width = Math.max(0, Math.min(100, share));
           return `<i style="--bar-width:${width}%; --bar-color:${bucketColors[index]}"></i>`;
         }).join("");
+        const mixRows = projection.initialBuckets.map((bucket, index) => {
+          const share = projection.startingAssets > 0 ? (bucket.startingBalance / projection.startingAssets) * 100 : 0;
+          return `
+            <div>
+              <span><i style="--mix-color:${bucketColors[index]}"></i>${bucket.label}</span>
+              <strong>${formatCurrency(bucket.startingBalance)}</strong>
+              <span>${Math.round(share)}%</span>
+            </div>
+          `;
+        }).join("");
+        const afterGrowth = projection.startingAssets + projection.totalGrowth;
+        const afterIncome = afterGrowth - projection.totalFunded;
+        const endingAssets = projection.endingAssets;
+        const finalBarValue = projection.coverageComplete ? endingAssets : -projection.totalGap;
+        const waterfallExtents = [
+          0,
+          projection.startingAssets,
+          afterGrowth,
+          afterIncome,
+          endingAssets,
+          projection.totalNeed,
+          finalBarValue
+        ];
+        const waterfallMin = Math.min(...waterfallExtents);
+        const waterfallMax = Math.max(...waterfallExtents);
+        const waterfallRange = Math.max(waterfallMax - waterfallMin, 1);
+        const waterfallScale = value => ((value - waterfallMin) / waterfallRange) * 100;
+        const waterfallStyle = (from, to) => {
+          const bottom = waterfallScale(Math.min(from, to));
+          const height = Math.abs(to - from) / waterfallRange * 100;
+          return `--bar-bottom:${bottom}%; --bar-height:${height}%; --bar-min:0; --label-bottom:${waterfallScale(Math.max(from, to))}%;`;
+        };
+        const waterfallBars = [
+          {
+            label: "Starting assets",
+            value: formatCurrency(projection.startingAssets),
+            from: 0,
+            to: projection.startingAssets,
+            color: "#2f7ac8"
+          },
+          {
+            label: projection.totalGrowth >= 0 ? "Investment growth" : "Investment loss",
+            value: formatSignedCurrency(projection.totalGrowth),
+            from: projection.startingAssets,
+            to: afterGrowth,
+            color: projection.totalGrowth >= 0 ? "#55e6c1" : "#ff7968"
+          },
+          {
+            label: "Income paid",
+            value: formatCurrency(projection.totalFunded),
+            from: afterGrowth,
+            to: afterIncome,
+            color: "#ffbf00",
+            isNegative: true
+          },
+          {
+            label: projection.coverageComplete ? "Projected cushion" : "Projected gap",
+            value: projection.coverageComplete ? formatCurrency(endingAssets) : formatSignedCurrency(-projection.totalGap),
+            from: 0,
+            to: finalBarValue,
+            color: projection.coverageComplete ? "#167a55" : "#ff7968",
+            isNegative: finalBarValue < 0
+          }
+        ];
+        const waterfallMarkup = waterfallBars.map(bar => `
+          <div class="summary-waterfall-column">
+            <span class="summary-waterfall-bar ${bar.isNegative ? "is-negative" : ""}" style="${waterfallStyle(bar.from, bar.to)} --bar-color:${bar.color};"></span>
+            <strong class="summary-waterfall-value" style="--label-color:${bar.color}; --label-bottom:${waterfallScale(Math.max(bar.from, bar.to))}%;">${bar.value}</strong>
+            <span class="summary-waterfall-label">${bar.label}</span>
+          </div>
+        `).join("");
+        const waterfallConnectorStyle = (fromIndex, value) => {
+          const columnWidth = 100 / waterfallBars.length;
+          const barInset = 0.14;
+          const left = fromIndex * columnWidth + columnWidth * (1 - barInset);
+          const right = 100 - ((fromIndex + 1) * columnWidth + columnWidth * barInset);
+          return `--connector-left:${left}%; --connector-right:${right}%; --connector-bottom:${waterfallScale(value)}%;`;
+        };
+        const waterfallConnectorMarkup = [
+          [0, projection.startingAssets],
+          [1, afterGrowth],
+          [2, afterIncome]
+        ].map(([fromIndex, value]) => `
+          <span class="summary-waterfall-connector" style="${waterfallConnectorStyle(fromIndex, value)}"></span>
+        `).join("");
 
         els.distributionSummaryCopy.innerHTML = `
           <div class="summary-hero">
@@ -6945,43 +7463,47 @@
             </div>
             <span class="summary-status-pill">${projection.status.label}</span>
           </div>
-          <div class="summary-metrics" aria-label="Distribution summary metrics">
-            <div class="summary-metric"><span>Coverage</span><strong>Age ${formatAge(projection.coverageAge)}</strong></div>
-            <div class="summary-metric"><span>Starting assets</span><strong>${formatCurrency(projection.startingAssets)}</strong></div>
-            <div class="summary-metric"><span>${gapLabel}</span><strong>${formatSignedCurrency(projection.surplusGap)}</strong></div>
-            <div class="summary-metric"><span>Total need</span><strong>${formatCurrency(projection.totalNeed)}</strong></div>
-            <div class="summary-metric"><span>Total funded</span><strong>${formatCurrency(projection.totalFunded)}</strong></div>
-            <div class="summary-metric"><span>Ending assets</span><strong>${formatCurrency(projection.endingAssets)}</strong></div>
-          </div>
-          <h4 class="summary-section-title">Bucket Flow Snapshot</h4>
-          <div class="summary-bucket-chart" aria-label="Bucket flow snapshot">
-            <div class="summary-chart-row">
-              <span>Assets today</span>
-              <div class="summary-stacked-bar" aria-hidden="true">${startingSegments}</div>
-              <strong>${formatCurrency(projection.startingAssets)}</strong>
+          <div class="summary-flow-snapshot" aria-label="Distribution summary snapshot">
+            <div class="summary-snapshot-grid">
+              <section class="summary-snapshot-panel" aria-label="Asset mix today">
+                <h4>Asset mix today</h4>
+                <div class="summary-panel-topline">
+                  <strong>${formatCurrency(projection.startingAssets)}</strong>
+                  <span>Starting assets</span>
+                </div>
+                <div class="summary-stacked-bar" aria-hidden="true">${startingSegments}</div>
+                <div class="summary-mix-list">${mixRows}</div>
+              </section>
+              <section class="summary-snapshot-panel" aria-label="Coverage period">
+                <h4>Coverage period</h4>
+                <div class="summary-panel-topline">
+                  <strong>Age ${formatAge(projection.coverageAge)}</strong>
+                  <span>${coveragePercentLabel} funded</span>
+                </div>
+                <div class="summary-coverage-meter" aria-hidden="true">
+                  <i style="--coverage-width:${coveragePercent}%; --coverage-min:${coveragePercent > 0 ? "8px" : "0"}"></i>
+                </div>
+                <div class="summary-coverage-meta">
+                  <span>${formatAge(inputs.currentAge)} start</span>
+                  <strong>${fundedYears} of ${requestedYears} years</strong>
+                  <span>${formatAge(inputs.planningEndAge)} goal</span>
+                </div>
+              </section>
             </div>
-            <div class="summary-chart-row">
-              <span>Income paid</span>
-              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${barWidth(projection.totalFunded)}%; --bar-min:14px; --bar-color:#167a55"></i></div>
-              <strong>${formatCurrency(projection.totalFunded)}</strong>
-            </div>
-            <div class="summary-chart-row">
-              <span>Ending assets</span>
-              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${barWidth(projection.endingAssets)}%; --bar-min:14px; --bar-color:#2f5f9d"></i></div>
-              <strong>${formatCurrency(projection.endingAssets)}</strong>
-            </div>
-            <div class="summary-chart-row">
-              <span>Coverage</span>
-              <div class="summary-bar-track" aria-hidden="true"><i style="--bar-width:${coveragePercent}%; --bar-min:14px; --bar-color:#6f7a80"></i></div>
-              <strong>Age ${formatAge(projection.coverageAge)}</strong>
-            </div>
-            <div class="summary-chart-legend" aria-hidden="true">
-              <span><i style="--legend-color:#55e6c1"></i>Bucket 1</span>
-              <span><i style="--legend-color:#7ab7ff"></i>Bucket 2</span>
-              <span><i style="--legend-color:#f6c766"></i>Bucket 3</span>
-              <span><i style="--legend-color:#167a55"></i>Income paid</span>
-              <span><i style="--legend-color:#6f7a80"></i>Coverage</span>
-            </div>
+            <section class="summary-waterfall" aria-label="Projected retirement outlook">
+              <div class="summary-waterfall-header">
+                <div>
+                  <h4>Projected Retirement Outlook</h4>
+                </div>
+                <strong>Total need ${formatCurrency(projection.totalNeed)}</strong>
+              </div>
+              <div class="summary-waterfall-stage" style="--zero-line:${waterfallScale(0)}%; --need-line:${waterfallScale(projection.totalNeed)}%;">
+                <div class="summary-waterfall-zero" aria-hidden="true"></div>
+                <div class="summary-waterfall-need" aria-hidden="true"><span>Total need</span></div>
+                <div class="summary-waterfall-connectors" aria-hidden="true">${waterfallConnectorMarkup}</div>
+                <div class="summary-waterfall-bars">${waterfallMarkup}</div>
+              </div>
+            </section>
           </div>
         `;
 
