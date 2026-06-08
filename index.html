@@ -4846,10 +4846,6 @@
                 <select id="portfolioModel" name="portfolioModel"></select>
               </div>
               <div class="field">
-                <label for="inflationRate">Inflation rate (%)</label>
-                <input id="inflationRate" name="inflationRate" type="number" min="0" max="20" step="0.1" inputmode="decimal">
-              </div>
-              <div class="field">
                 <label for="annualFeeRate">Annual fee rate (%)</label>
                 <input id="annualFeeRate" name="annualFeeRate" type="number" min="0" max="5" step="0.01" inputmode="decimal">
               </div>
@@ -5334,7 +5330,7 @@
         employerMatch: 450,
         portfolioModel: "balancedGrowth",
         inflationRate: 2.5,
-        annualFeeRate: 0.75,
+        annualFeeRate: 1.25,
         retirementGoalBalance: 1800000
       };
 
@@ -5343,8 +5339,7 @@
         { id: "saveMore", label: "Save more", apply: inputs => ({ ...inputs, monthlyContribution: inputs.monthlyContribution * 1.2 }) },
         { id: "retireLater", label: "Retire later", apply: inputs => ({ ...inputs, retirementAge: inputs.retirementAge + 3 }) },
         { id: "moreConservative", label: "More conservative", apply: inputs => shiftPortfolio(inputs, -1) },
-        { id: "moreAggressive", label: "More aggressive", apply: inputs => shiftPortfolio(inputs, 1) },
-        { id: "lowerFees", label: "Lower costs", apply: inputs => ({ ...inputs, annualFeeRate: Math.max(0.05, inputs.annualFeeRate - 0.5) }) }
+        { id: "moreAggressive", label: "More aggressive", apply: inputs => shiftPortfolio(inputs, 1) }
       ];
 
       const distributionBucketLabels = ["Bucket 1", "Bucket 2", "Bucket 3"];
@@ -6127,12 +6122,10 @@
 
         const adjustedAnnualReturn = Math.max(-0.99, model.annualReturn + (Number(inputs.returnAdjustment) || 0));
         const monthlyReturn = Math.pow(1 + adjustedAnnualReturn, 1 / 12) - 1;
-        const monthlyInflation = Math.pow(1 + inputs.inflationRate / 100, 1 / 12) - 1;
         const monthlyFee = Math.pow(1 + inputs.annualFeeRate / 100, 1 / 12) - 1;
 
         let balance = inputs.currentSavings;
         let contribution = inputs.monthlyContribution;
-        let cumulativeInflation = 1;
         let totalClientContributions = 0;
         let totalEmployerMatch = 0;
         let totalFeesPaid = 0;
@@ -6153,7 +6146,6 @@
           balance -= feePaid;
           balance += contribution + inputs.employerMatch;
 
-          cumulativeInflation *= 1 + monthlyInflation;
           totalClientContributions += contribution;
           totalEmployerMatch += inputs.employerMatch;
           totalFeesPaid += feePaid;
@@ -6168,8 +6160,8 @@
             returnAmount,
             feePaid,
             balance,
-            realBalance: balance / cumulativeInflation,
-            cumulativeInflation,
+            realBalance: balance,
+            cumulativeInflation: 1,
             totalClientContributions,
             totalEmployerMatch,
             totalFeesPaid
@@ -6187,10 +6179,10 @@
 
         const ending = monthlyRows[monthlyRows.length - 1];
         const endingBalance = ending ? ending.balance : inputs.currentSavings;
-        const realEndingBalance = ending ? ending.realBalance : inputs.currentSavings;
+        const realEndingBalance = endingBalance;
         const investmentGrowth = endingBalance - inputs.currentSavings - totalClientContributions - totalEmployerMatch;
-        const goalGap = realEndingBalance - inputs.retirementGoalBalance;
-        const goalProgress = inputs.retirementGoalBalance > 0 ? realEndingBalance / inputs.retirementGoalBalance : 1;
+        const goalGap = endingBalance - inputs.retirementGoalBalance;
+        const goalProgress = inputs.retirementGoalBalance > 0 ? endingBalance / inputs.retirementGoalBalance : 1;
 
         return {
           inputs,
@@ -6232,7 +6224,7 @@
             label: preset.label,
             inputs: scenarioInputs,
             projection,
-            differenceFromBaseline: projection.realEndingBalance - baselineProjection.realEndingBalance
+            differenceFromBaseline: projection.endingBalance - baselineProjection.endingBalance
           };
         });
       }
@@ -6599,8 +6591,8 @@
           el.className = `status-chip ${projection.trackStatus.key === "close" ? "close" : ""} ${projection.trackStatus.key === "behind" ? "behind" : ""}`.trim();
         });
         els.goalMessage.textContent = projection.goalGap >= 0
-          ? `Projected purchasing power is ${formatCurrency(projection.goalGap)} above the goal.`
-          : `Projected purchasing power is ${formatCurrency(Math.abs(projection.goalGap))} below the goal.`;
+          ? `Projected balance is ${formatCurrency(projection.goalGap)} above the goal.`
+          : `Projected balance is ${formatCurrency(Math.abs(projection.goalGap))} below the goal.`;
       }
 
       function renderHeroSparkline(projection) {
@@ -6637,14 +6629,14 @@
           const oldShare = Math.max(0, (existingPrincipal / stackTotal) * 100);
           const newShare = Math.max(0, (newPrincipal / stackTotal) * 100);
           const growthShare = Math.max(0, (totalGrowth / stackTotal) * 100);
-          const progress = Math.max(0, Math.min(100, (row.realBalance / goal) * 100));
+          const progress = Math.max(0, Math.min(100, (row.balance / goal) * 100));
           return `
             <article class="annual-story-row" style="--progress-width:${progress}%; --progress-min:${progress > 0 ? "10px" : "0"}">
               <div class="annual-story-age"><span>Age</span><strong>${formatAge(row.age)}</strong></div>
               <div class="annual-story-main">
                 <strong>${formatCurrency(row.balance)} projected balance</strong>
                 <div class="annual-progress-track" aria-hidden="true"><i></i></div>
-                <span>${Math.round(progress)}% of the goal in today's dollars by year ${row.year}.</span>
+                <span>${Math.round(progress)}% of the goal by year ${row.year}.</span>
                 <div class="annual-decomposition" aria-label="Balance decomposition">
                   <div class="annual-stack" aria-hidden="true">
                     <i style="--share:${oldShare}%; --share-min:${oldShare > 0 ? "4px" : "0"}; --source-color:var(--blue)"></i>
@@ -7346,8 +7338,7 @@
           return "No sandbox changes are active, so the baseline projection is unchanged.";
         }
         const balanceDelta = projection.endingBalance - baseline.endingBalance;
-        const realDelta = projection.realEndingBalance - baseline.realEndingBalance;
-        return `Together, the active changes move the projected balance by ${formatSignedCurrency(balanceDelta)} and the inflation-adjusted result by ${formatSignedCurrency(realDelta)}.`;
+        return `Together, the active changes move the projected balance by ${formatSignedCurrency(balanceDelta)}.`;
       }
 
       function setupDistributionSensitivitySandbox() {
@@ -7802,7 +7793,7 @@
         const yearsToRetirement = Math.max(0, inputs.retirementAge - inputs.currentAge);
         const contributionTotal = projection.totalClientContributions + projection.totalEmployerMatch;
         const goal = Math.max(inputs.retirementGoalBalance, 1);
-        const goalProgress = Math.max(0, Math.min(100, (projection.realEndingBalance / goal) * 100));
+        const goalProgress = Math.max(0, Math.min(100, (projection.endingBalance / goal) * 100));
         const goalProgressLabel = `${Math.round(goalProgress)}%`;
         const componentTotal = Math.max(projection.endingBalance, 1);
         const componentRows = [
@@ -7830,7 +7821,6 @@
           inputs.currentSavings,
           afterContributions,
           projection.endingBalance,
-          projection.realEndingBalance,
           inputs.retirementGoalBalance
         ];
         const waterfallMin = Math.min(...waterfallExtents);
@@ -7864,14 +7854,6 @@
             to: projection.endingBalance,
             color: projection.investmentGrowth >= 0 ? "#55e6c1" : "#ff7968",
             isNegative: projection.investmentGrowth < 0
-          },
-          {
-            label: "Today's dollars",
-            value: formatCurrency(projection.realEndingBalance),
-            from: 0,
-            to: projection.realEndingBalance,
-            color: projection.goalGap >= 0 ? "#167a55" : "#ff7968",
-            isNegative: projection.realEndingBalance < 0
           }
         ];
         const waterfallMarkup = waterfallBars.map(bar => `
@@ -7890,15 +7872,14 @@
         };
         const waterfallConnectorMarkup = [
           [0, inputs.currentSavings],
-          [1, afterContributions],
-          [2, projection.endingBalance]
+          [1, afterContributions]
         ].map(([fromIndex, value]) => `
           <span class="summary-waterfall-connector" style="${waterfallConnectorStyle(fromIndex, value)}"></span>
         `).join("");
 
         const improvementSentence = bestScenario && bestScenario.differenceFromBaseline > 0
           ? `${bestScenario.label}: ${formatSignedCurrency(bestScenario.differenceFromBaseline)} versus baseline.`
-          : "No selected scenario improves the inflation-adjusted baseline.";
+          : "No selected scenario improves the baseline.";
 
         els.summaryCopy.innerHTML = `
           <div class="summary-hero">
@@ -7922,7 +7903,7 @@
               <section class="summary-snapshot-panel" aria-label="Goal progress">
                 <h4>Goal progress</h4>
                 <div class="summary-panel-topline">
-                  <strong>${formatCurrency(projection.realEndingBalance)}</strong>
+                  <strong>${formatCurrency(projection.endingBalance)}</strong>
                   <span>${goalProgressLabel} of goal</span>
                 </div>
                 <div class="summary-coverage-meter" aria-hidden="true">
@@ -7958,8 +7939,6 @@
           ["Portfolio model", model.label],
           ["Expected return", formatPercent(model.annualReturn)],
           ["Volatility assumption", formatPercent(model.volatility)],
-          ["Inflation rate", formatPercent(inputs.inflationRate / 100)],
-          ["Annual fee rate", formatPercent(inputs.annualFeeRate / 100)],
           ["Retirement goal", formatCurrency(inputs.retirementGoalBalance)]
         ];
 
@@ -8513,17 +8492,18 @@
         const originalConservative = portfolioModels.conservative;
         portfolioModels.conservative = { ...originalConservative, annualReturn: 0, volatility: 0.05 };
         const zeroProjection = calculateProjection(zeroModelInputs);
-        assert(nearlyEqual(zeroProjection.endingBalance, 23200), "Zero return/fee/inflation should equal savings plus contributions and match.");
-        assert(nearlyEqual(zeroProjection.realEndingBalance, zeroProjection.endingBalance), "Zero inflation should keep real and nominal balance equal.");
+        assert(nearlyEqual(zeroProjection.endingBalance, 23200), "Zero return and fee should equal savings plus contributions and match.");
+        assert(nearlyEqual(zeroProjection.realEndingBalance, zeroProjection.endingBalance), "Accumulation projections should use nominal ending balance.");
         portfolioModels.conservative = originalConservative;
 
         const inflationProjection = calculateProjection({ ...zeroModelInputs, inflationRate: 3 });
-        assert(inflationProjection.realEndingBalance < inflationProjection.endingBalance, "Positive inflation should lower real balance.");
+        assert(nearlyEqual(inflationProjection.realEndingBalance, inflationProjection.endingBalance), "Accumulation inflation input should not reduce nominal balance.");
 
         const noFeeProjection = calculateProjection({ ...defaults, annualFeeRate: 0 });
         const feeProjection = calculateProjection({ ...defaults, annualFeeRate: 1 });
         assert(feeProjection.endingBalance < noFeeProjection.endingBalance, "Fees should reduce ending balance.");
         assert(feeProjection.totalFeesPaid > 0, "Fees should accumulate in fees paid.");
+        assert(nearlyEqual(feeProjection.goalGap, feeProjection.endingBalance - feeProjection.inputs.retirementGoalBalance), "Accumulation goal gap should use nominal ending balance.");
 
         const increaseProjection = calculateProjection({
           ...defaults,
@@ -8544,7 +8524,7 @@
         assert(scenarios.find(s => s.id === "retireLater").inputs.retirementAge === scenarioInputs.retirementAge + 3, "Retire later should add three years.");
         assert(scenarios.find(s => s.id === "moreConservative").inputs.portfolioModel === "conservative", "More conservative should shift one model lower.");
         assert(scenarios.find(s => s.id === "moreAggressive").inputs.portfolioModel === "balancedGrowth", "More aggressive should shift one model higher.");
-        assert(nearlyEqual(scenarios.find(s => s.id === "lowerFees").inputs.annualFeeRate, 0.25), "Lower fees should reduce fee rate by 0.50 points.");
+        assert(!scenarios.some(s => s.id === "lowerFees"), "Fee assumptions should not be exposed as a scenario lever.");
 
         assert(validateInputs({ ...defaults, currentAge: 67, retirementAge: 67 }).length === 1, "Retirement age at or below current age should be invalid.");
 
