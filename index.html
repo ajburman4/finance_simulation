@@ -4846,10 +4846,6 @@
                 <select id="portfolioModel" name="portfolioModel"></select>
               </div>
               <div class="field">
-                <label for="annualFeeRate">Annual fee rate (%)</label>
-                <input id="annualFeeRate" name="annualFeeRate" type="number" min="0" max="5" step="0.01" inputmode="decimal">
-              </div>
-              <div class="field">
                 <label for="retirementGoalBalance">Retirement goal</label>
                 <input id="retirementGoalBalance" name="retirementGoalBalance" type="text" min="0" step="10000" inputmode="decimal" autocomplete="off" data-format="money">
               </div>
@@ -5310,6 +5306,7 @@
 
       const STORAGE_KEY = "financeSimulationInputs.v1";
       const DISTRIBUTION_STORAGE_KEY = "financeSimulationDistributionInputs.v1";
+      const ACCUMULATION_ANNUAL_FEE_RATE = 1.25;
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const portfolioModels = {
@@ -5330,7 +5327,7 @@
         employerMatch: 450,
         portfolioModel: "balancedGrowth",
         inflationRate: 2.5,
-        annualFeeRate: 1.25,
+        annualFeeRate: ACCUMULATION_ANNUAL_FEE_RATE,
         retirementGoalBalance: 1800000
       };
 
@@ -5893,8 +5890,15 @@
           employerMatch: clampNumber(inputs.employerMatch, 0, 1000000, defaults.employerMatch),
           portfolioModel: portfolioModels[inputs.portfolioModel] ? inputs.portfolioModel : defaults.portfolioModel,
           inflationRate: clampNumber(inputs.inflationRate, 0, 20, defaults.inflationRate),
-          annualFeeRate: clampNumber(inputs.annualFeeRate, 0, 5, defaults.annualFeeRate),
+          annualFeeRate: ACCUMULATION_ANNUAL_FEE_RATE,
           retirementGoalBalance: clampNumber(inputs.retirementGoalBalance, 0, 100000000, defaults.retirementGoalBalance)
+        };
+      }
+
+      function withAccumulationFeeAssumption(inputs) {
+        return {
+          ...inputs,
+          annualFeeRate: ACCUMULATION_ANNUAL_FEE_RATE
         };
       }
 
@@ -6116,13 +6120,14 @@
       }
 
       function calculateProjection(inputs) {
+        inputs = withAccumulationFeeAssumption(inputs);
         const model = portfolioModels[inputs.portfolioModel];
         const months = Math.round((inputs.retirementAge - inputs.currentAge) * 12);
         const annualIncreaseRate = inputs.annualContributionIncrease / 100;
 
         const adjustedAnnualReturn = Math.max(-0.99, model.annualReturn + (Number(inputs.returnAdjustment) || 0));
         const monthlyReturn = Math.pow(1 + adjustedAnnualReturn, 1 / 12) - 1;
-        const monthlyFee = Math.pow(1 + inputs.annualFeeRate / 100, 1 / 12) - 1;
+        const quarterlyFee = Math.pow(1 + ACCUMULATION_ANNUAL_FEE_RATE / 100, 1 / 4) - 1;
 
         let balance = inputs.currentSavings;
         let contribution = inputs.monthlyContribution;
@@ -6142,7 +6147,7 @@
           const returnAmount = balance * monthlyReturn;
           balance += returnAmount;
 
-          const feePaid = balance * monthlyFee;
+          const feePaid = month % 3 === 0 ? balance * quarterlyFee : 0;
           balance -= feePaid;
           balance += contribution + inputs.employerMatch;
 
@@ -6215,9 +6220,10 @@
       }
 
       function buildScenarios(inputs) {
+        inputs = withAccumulationFeeAssumption(inputs);
         const baselineProjection = calculateProjection(inputs);
         return scenarioPresets.map(preset => {
-          const scenarioInputs = preset.apply(inputs);
+          const scenarioInputs = withAccumulationFeeAssumption(preset.apply(inputs));
           const projection = preset.id === "baseline" ? baselineProjection : calculateProjection(scenarioInputs);
           return {
             id: preset.id,
@@ -6491,7 +6497,6 @@
           endingBalance: formatCurrency(projection.endingBalance),
           realEndingBalance: formatCurrency(projection.realEndingBalance),
           goalGap: formatSignedCurrency(projection.goalGap),
-          feesPaid: formatCurrency(projection.totalFeesPaid),
           startingSavings: formatCurrency(inputs.currentSavings),
           clientContributions: formatCurrency(projection.totalClientContributions),
           employerMatchTotal: formatCurrency(projection.totalEmployerMatch),
@@ -8492,18 +8497,23 @@
         const originalConservative = portfolioModels.conservative;
         portfolioModels.conservative = { ...originalConservative, annualReturn: 0, volatility: 0.05 };
         const zeroProjection = calculateProjection(zeroModelInputs);
-        assert(nearlyEqual(zeroProjection.endingBalance, 23200), "Zero return and fee should equal savings plus contributions and match.");
+        assert(nearlyEqual(zeroProjection.inputs.annualFeeRate, ACCUMULATION_ANNUAL_FEE_RATE), "Accumulation fee assumption should stay fixed behind the scenes.");
+        assert(nearlyEqual(zeroProjection.endingBalance, 22987.46), "Zero return projection should still apply the fixed quarterly fee assumption.");
+        assert(nearlyEqual(zeroProjection.monthlyRows[0].feePaid, 0), "Quarterly fees should not be assessed in month 1.");
+        assert(nearlyEqual(zeroProjection.monthlyRows[1].feePaid, 0), "Quarterly fees should not be assessed in month 2.");
+        assert(zeroProjection.monthlyRows[2].feePaid > 0, "Quarterly fees should first be assessed in month 3.");
+        assert(nearlyEqual(zeroProjection.totalFeesPaid, 212.54), "Quarterly fees should accumulate from quarter-end assessments.");
         assert(nearlyEqual(zeroProjection.realEndingBalance, zeroProjection.endingBalance), "Accumulation projections should use nominal ending balance.");
         portfolioModels.conservative = originalConservative;
 
         const inflationProjection = calculateProjection({ ...zeroModelInputs, inflationRate: 3 });
         assert(nearlyEqual(inflationProjection.realEndingBalance, inflationProjection.endingBalance), "Accumulation inflation input should not reduce nominal balance.");
 
-        const noFeeProjection = calculateProjection({ ...defaults, annualFeeRate: 0 });
-        const feeProjection = calculateProjection({ ...defaults, annualFeeRate: 1 });
-        assert(feeProjection.endingBalance < noFeeProjection.endingBalance, "Fees should reduce ending balance.");
-        assert(feeProjection.totalFeesPaid > 0, "Fees should accumulate in fees paid.");
-        assert(nearlyEqual(feeProjection.goalGap, feeProjection.endingBalance - feeProjection.inputs.retirementGoalBalance), "Accumulation goal gap should use nominal ending balance.");
+        const lowFeeOverrideProjection = calculateProjection({ ...defaults, annualFeeRate: 0 });
+        const highFeeOverrideProjection = calculateProjection({ ...defaults, annualFeeRate: 5 });
+        assert(nearlyEqual(lowFeeOverrideProjection.endingBalance, highFeeOverrideProjection.endingBalance), "Fee overrides should not change accumulation projections.");
+        assert(lowFeeOverrideProjection.totalFeesPaid > 0, "Fixed fees should accumulate in fees paid.");
+        assert(nearlyEqual(lowFeeOverrideProjection.goalGap, lowFeeOverrideProjection.endingBalance - lowFeeOverrideProjection.inputs.retirementGoalBalance), "Accumulation goal gap should use nominal ending balance.");
 
         const increaseProjection = calculateProjection({
           ...defaults,
@@ -8520,6 +8530,7 @@
 
         const scenarioInputs = { ...defaults, portfolioModel: "moderate", annualFeeRate: 0.75 };
         const scenarios = buildScenarios(scenarioInputs);
+        assert(scenarios.every(s => nearlyEqual(s.inputs.annualFeeRate, ACCUMULATION_ANNUAL_FEE_RATE)), "Scenario fee assumptions should stay fixed behind the scenes.");
         assert(scenarios.find(s => s.id === "saveMore").inputs.monthlyContribution === scenarioInputs.monthlyContribution * 1.2, "Save more should only increase monthly contribution.");
         assert(scenarios.find(s => s.id === "retireLater").inputs.retirementAge === scenarioInputs.retirementAge + 3, "Retire later should add three years.");
         assert(scenarios.find(s => s.id === "moreConservative").inputs.portfolioModel === "conservative", "More conservative should shift one model lower.");
