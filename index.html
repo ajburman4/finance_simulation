@@ -8033,7 +8033,7 @@
           }
         ];
         if (els.balanceRangeMethod) {
-          els.balanceRangeMethod.textContent = `Planning ranges shift estimated returns up and down based on ${formatWholePercent(state.projection.model.volatility)} portfolio volatility.`;
+          els.balanceRangeMethod.textContent = "Planning ranges shift estimated returns up and down based on example portfolio volatility.";
         }
         state.charts.balance = upsertChart("balance-chart", state.charts.balance, "line", labels, datasets, {
           plugins: {
