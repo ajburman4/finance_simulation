@@ -5186,7 +5186,6 @@
               <div class="chart-wrap"><canvas id="distribution-portfolio-stack-chart"></canvas></div>
               <div class="chart-fallback" data-fallback="distribution-portfolio-stack">Charts are unavailable because Chart.js did not load. Metrics and tables still work.</div>
             </section>
-            <section class="chart-panel refill-cascade" id="distribution-refill-cascade" aria-label="Year-end bucket refill cascade"></section>
           </div>
 
           <section class="panel reveal">
@@ -5407,7 +5406,6 @@
           component: null,
           scenario: null,
           distributionPortfolioStack: null,
-          distributionNeed: null,
           distributionScenario: null
         }
       };
@@ -5454,7 +5452,6 @@
         distributionPrintButton: document.getElementById("distribution-print-button"),
         distributionIncomeRunway: document.getElementById("distribution-income-runway"),
         distributionDrawdownBridge: document.getElementById("distribution-drawdown-bridge"),
-        distributionRefillCascade: document.getElementById("distribution-refill-cascade"),
         distributionDrawdownMap: document.getElementById("distribution-drawdown-map"),
         distributionSensitivityControls: document.getElementById("distribution-sensitivity-controls"),
         distributionSensitivityReset: document.getElementById("distribution-sensitivity-reset"),
@@ -6094,7 +6091,6 @@
         els.distributionAssumptionList.innerHTML = "";
         if (els.distributionIncomeRunway) els.distributionIncomeRunway.innerHTML = "";
         if (els.distributionDrawdownBridge) els.distributionDrawdownBridge.innerHTML = "";
-        if (els.distributionRefillCascade) els.distributionRefillCascade.innerHTML = "";
         if (els.distributionSensitivityOutcome) els.distributionSensitivityOutcome.innerHTML = "";
         if (els.distributionRiskLadder) els.distributionRiskLadder.innerHTML = "";
         updateDistributionMetricText({});
@@ -6110,7 +6106,6 @@
         updateDistributionMetricVisuals(state.distributionProjection);
         renderDistributionIncomeRunway(state.distributionProjection);
         renderDistributionDrawdownBridge(state.distributionProjection);
-        renderDistributionRefillCascade(state.distributionProjection);
         renderDistributionSparkline(state.distributionProjection);
         renderDistributionDrawdownMap(state.distributionProjection);
         renderDistributionSensitivity();
@@ -6247,13 +6242,16 @@
 
       function calculateDistributionProjection(inputs) {
         const horizonYears = Math.round(inputs.planningEndAge - inputs.currentAge);
+        const horizonMonths = horizonYears * 12;
         const inflationRate = inputs.inflationRate / 100;
         const returnAdjustment = Number(inputs.returnAdjustment) || 0;
         const trancheReturns = getDistributionTrancheReturns(inputs, returnAdjustment);
+        const monthlyReturns = trancheReturns.map(rate => Math.pow(1 + rate, 1 / 12) - 1);
         const annualNeedStart = getAnnualWithdrawalNeed(inputs);
         const startingAssets = getDistributionStartingAssets(inputs);
         const annualNeeds = getDistributionAnnualNeeds(annualNeedStart, inflationRate, horizonYears);
-        const initialBuckets = allocateDistributionBuckets(startingAssets, annualNeeds, trancheReturns);
+        const monthlyNeeds = getDistributionMonthlyNeeds(annualNeeds);
+        const initialBuckets = allocateDistributionBuckets(startingAssets, monthlyNeeds, trancheReturns);
         let bucketBalances = initialBuckets.map(bucket => bucket.startingBalance);
 
         let totalNeed = 0;
@@ -6261,13 +6259,66 @@
         let totalGap = 0;
         let totalGrowth = 0;
         let coverageAge = inputs.currentAge;
+        const monthlyRows = [];
         const annualRows = [];
+        let annualRow = null;
+        let pendingQuarterRebalance = null;
 
-        for (let year = 1; year <= horizonYears; year += 1) {
-          const annualNeed = annualNeeds[year - 1] || 0;
+        for (let month = 1; month <= horizonMonths; month += 1) {
+          let currentQuarterRebalance = null;
+          if (month > 1 && (month - 1) % 3 === 0) {
+            const quarterRebalance = rebalanceDistributionBuckets(bucketBalances, monthlyNeeds, month);
+            currentQuarterRebalance = quarterRebalance;
+            bucketBalances = quarterRebalance.bucketBalances.slice();
+            if (annualRow) {
+              addDistributionRefillToAnnualRow(annualRow, quarterRebalance);
+            } else {
+              pendingQuarterRebalance = quarterRebalance;
+            }
+          }
+
+          const year = Math.ceil(month / 12);
+          const monthInYear = ((month - 1) % 12) + 1;
+          if (monthInYear === 1) {
+            annualRow = {
+              year,
+              startAge: inputs.currentAge + year - 1,
+              age: inputs.currentAge + year,
+              startingBalance: sumDistributionValues(bucketBalances),
+              annualNeed: 0,
+              funded: 0,
+              gap: 0,
+              growth: 0,
+              endingAssets: 0,
+              totalNeed: 0,
+              totalFunded: 0,
+              totalGap: 0,
+              totalGrowth: 0,
+              bucketStartingBalances: bucketBalances.slice(),
+              bucketAfterWithdrawalBalances: bucketBalances.slice(),
+              bucketPostGrowthBalances: bucketBalances.slice(),
+              bucketEndingBalances: bucketBalances.slice(),
+              withdrawalsByBucket: [0, 0, 0],
+              growthByBucket: [0, 0, 0],
+              refillShort: 0,
+              refillMid: 0,
+              refillInByBucket: [0, 0, 0],
+              refillOutByBucket: [0, 0, 0],
+              refillLabels: []
+            };
+            if (pendingQuarterRebalance) {
+              addDistributionRefillToAnnualRow(annualRow, pendingQuarterRebalance);
+              pendingQuarterRebalance = null;
+            }
+          }
+
+          const monthlyNeed = monthlyNeeds[month - 1] || 0;
           const bucketStartingBalances = bucketBalances.slice();
           const startingBalance = sumDistributionValues(bucketStartingBalances);
-          let remainingNeed = annualNeed;
+          const growthByBucket = bucketBalances.map((balance, index) => balance * monthlyReturns[index]);
+          bucketBalances = bucketBalances.map((balance, index) => balance + growthByBucket[index]);
+          const bucketPostGrowthBalances = bucketBalances.slice();
+          let remainingNeed = monthlyNeed;
 
           const withdrawalsByBucket = bucketBalances.map(balance => {
             const fundedFromBucket = Math.min(balance, remainingNeed);
@@ -6277,30 +6328,27 @@
 
           bucketBalances = bucketBalances.map((balance, index) => balance - withdrawalsByBucket[index]);
           const bucketAfterWithdrawalBalances = bucketBalances.slice();
-          const funded = annualNeed - remainingNeed;
+          const funded = monthlyNeed - remainingNeed;
           const gap = remainingNeed;
-
-          const growthByBucket = bucketBalances.map((balance, index) => balance * trancheReturns[index]);
-          bucketBalances = bucketBalances.map((balance, index) => balance + growthByBucket[index]);
-          const bucketPostGrowthBalances = bucketBalances.slice();
           const growth = sumDistributionValues(growthByBucket);
-          const endingAssets = sumDistributionValues(bucketPostGrowthBalances);
-          const rebalance = rebalanceDistributionBuckets(bucketPostGrowthBalances, annualNeeds, year + 1);
-          bucketBalances = rebalance.bucketBalances.slice();
+          const endingAssets = sumDistributionValues(bucketAfterWithdrawalBalances);
 
-          totalNeed += annualNeed;
+          totalNeed += monthlyNeed;
           totalFunded += funded;
           totalGap += gap;
           totalGrowth += growth;
 
-          if (gap <= 0.01) coverageAge = inputs.currentAge + year;
+          if (gap <= 0.01) coverageAge = inputs.currentAge + month / 12;
 
-          annualRows.push({
+          const monthRow = {
+            month,
             year,
-            age: inputs.currentAge + year,
+            monthInYear,
+            age: inputs.currentAge + month / 12,
             sourceLabel: getDistributionWithdrawalSourceLabel(withdrawalsByBucket),
             startingBalance,
-            annualNeed,
+            monthlyNeed,
+            annualNeed: monthlyNeed,
             funded,
             gap,
             growth,
@@ -6312,13 +6360,45 @@
             bucketStartingBalances,
             bucketAfterWithdrawalBalances,
             bucketPostGrowthBalances,
-            bucketEndingBalances: rebalance.bucketBalances.slice(),
+            bucketEndingBalances: bucketAfterWithdrawalBalances.slice(),
             withdrawalsByBucket,
             growthByBucket,
-            refillShort: rebalance.refillShort,
-            refillMid: rebalance.refillMid,
-            refillLabel: rebalance.refillLabel
-          });
+            refillShort: currentQuarterRebalance?.refillShort || 0,
+            refillMid: currentQuarterRebalance?.refillMid || 0,
+            refillInByBucket: currentQuarterRebalance?.refillInByBucket?.slice() || [0, 0, 0],
+            refillOutByBucket: currentQuarterRebalance?.refillOutByBucket?.slice() || [0, 0, 0],
+            refillLabel: currentQuarterRebalance?.refillLabel || "No quarterly reset"
+          };
+          monthlyRows.push(monthRow);
+
+          if (annualRow) {
+            annualRow.annualNeed += monthlyNeed;
+            annualRow.funded += funded;
+            annualRow.gap += gap;
+            annualRow.growth += growth;
+            annualRow.endingAssets = endingAssets;
+            annualRow.totalNeed = totalNeed;
+            annualRow.totalFunded = totalFunded;
+            annualRow.totalGap = totalGap;
+            annualRow.totalGrowth = totalGrowth;
+            annualRow.bucketAfterWithdrawalBalances = bucketAfterWithdrawalBalances.slice();
+            annualRow.bucketPostGrowthBalances = bucketPostGrowthBalances.slice();
+            annualRow.bucketEndingBalances = bucketAfterWithdrawalBalances.slice();
+            withdrawalsByBucket.forEach((value, index) => {
+              annualRow.withdrawalsByBucket[index] += value;
+            });
+            growthByBucket.forEach((value, index) => {
+              annualRow.growthByBucket[index] += value;
+            });
+          }
+
+          if ((monthInYear === 12 || month === horizonMonths) && annualRow) {
+            annualRow.sourceLabel = getDistributionWithdrawalSourceLabel(annualRow.withdrawalsByBucket);
+            annualRow.refillLabel = annualRow.refillLabels.length ? annualRow.refillLabels.join(" · ") : "No quarterly reset needed";
+            delete annualRow.refillLabels;
+            annualRows.push(annualRow);
+            annualRow = null;
+          }
         }
 
         const ending = annualRows[annualRows.length - 1];
@@ -6329,11 +6409,15 @@
         return {
           inputs,
           trancheReturns,
+          monthlyReturns,
           initialBuckets,
+          monthlyRows,
           annualRows,
           horizonYears,
+          horizonMonths,
           annualNeedStart,
           annualNeeds,
+          monthlyNeeds,
           startingAssets,
           totalNeed,
           totalFunded,
@@ -6347,12 +6431,30 @@
         };
       }
 
+      function addDistributionRefillToAnnualRow(annualRow, quarterRebalance) {
+        annualRow.refillShort += quarterRebalance.refillShort;
+        annualRow.refillMid += quarterRebalance.refillMid;
+        quarterRebalance.refillInByBucket.forEach((value, index) => {
+          annualRow.refillInByBucket[index] += value;
+        });
+        quarterRebalance.refillOutByBucket.forEach((value, index) => {
+          annualRow.refillOutByBucket[index] += value;
+        });
+        if (quarterRebalance.refillLabel !== "Buckets already filled" && quarterRebalance.refillLabel !== "No reset needed") {
+          annualRow.refillLabels.push(quarterRebalance.refillLabel);
+        }
+      }
+
       function getAnnualWithdrawalNeed(inputs) {
         return inputs.withdrawalCadence === "annual" ? inputs.withdrawalAmount : inputs.withdrawalAmount * 12;
       }
 
       function getDistributionAnnualNeeds(annualNeedStart, inflationRate, horizonYears) {
         return Array.from({ length: horizonYears }, (_, index) => annualNeedStart * Math.pow(1 + inflationRate, index));
+      }
+
+      function getDistributionMonthlyNeeds(annualNeeds) {
+        return annualNeeds.flatMap(annualNeed => Array.from({ length: 12 }, () => annualNeed / 12));
       }
 
       function getDistributionStartingAssets(inputs) {
@@ -6383,10 +6485,20 @@
         }, 0);
       }
 
-      function allocateDistributionBuckets(startingAssets, annualNeeds, trancheReturns) {
+      function getDistributionNeedForMonthRange(monthlyNeeds, startMonth, endMonth) {
+        return monthlyNeeds.reduce((total, value, index) => {
+          const month = index + 1;
+          if (month < startMonth || month > endMonth) return total;
+          return total + value;
+        }, 0);
+      }
+
+      function allocateDistributionBuckets(startingAssets, monthlyNeeds, trancheReturns) {
         let remainingAssets = startingAssets;
         return getDistributionBucketConfigs(trancheReturns).map((bucket, index, buckets) => {
-          const targetNeed = getDistributionNeedForRange(annualNeeds, bucket.startYear, bucket.endYear);
+          const startMonth = bucket.startYear === Number.POSITIVE_INFINITY ? Number.POSITIVE_INFINITY : ((bucket.startYear - 1) * 12) + 1;
+          const endMonth = bucket.endYear === Number.POSITIVE_INFINITY ? Number.POSITIVE_INFINITY : bucket.endYear * 12;
+          const targetNeed = getDistributionNeedForMonthRange(monthlyNeeds, startMonth, endMonth);
           const startingBalance = index === buckets.length - 1
             ? remainingAssets
             : Math.min(remainingAssets, targetNeed);
@@ -6399,19 +6511,21 @@
         });
       }
 
-      function rebalanceDistributionBuckets(postGrowthBalances, annualNeeds, nextYear) {
+      function rebalanceDistributionBuckets(postGrowthBalances, monthlyNeeds, nextMonth) {
         const totalAssets = sumDistributionValues(postGrowthBalances);
-        if (nextYear > annualNeeds.length) {
+        if (nextMonth > monthlyNeeds.length) {
           return {
             bucketBalances: postGrowthBalances.slice(),
             refillShort: 0,
             refillMid: 0,
+            refillInByBucket: [0, 0, 0],
+            refillOutByBucket: [0, 0, 0],
             refillLabel: "No reset needed"
           };
         }
 
-        const shortTargetNeed = getDistributionNeedForRange(annualNeeds, nextYear, nextYear + 1);
-        const midTargetNeed = getDistributionNeedForRange(annualNeeds, nextYear + 2, nextYear + 6);
+        const shortTargetNeed = getDistributionNeedForMonthRange(monthlyNeeds, nextMonth, nextMonth + 23);
+        const midTargetNeed = getDistributionNeedForMonthRange(monthlyNeeds, nextMonth + 24, nextMonth + 83);
         const shortTarget = Math.min(totalAssets, shortTargetNeed);
         const midTarget = Math.min(Math.max(totalAssets - shortTarget, 0), midTargetNeed);
         const longTarget = Math.max(totalAssets - shortTarget - midTarget, 0);
@@ -6437,6 +6551,8 @@
 
         const refillShort = reserveToShort + growthToShort;
         const refillMid = growthToReserve;
+        const refillInByBucket = [refillShort, refillMid, 0];
+        const refillOutByBucket = [0, reserveToShort, growthToShort + growthToReserve];
         const refillParts = [];
 
         if (reserveToShort > 0.01) refillParts.push(`${distributionBucketLabels[1]} -> ${distributionBucketLabels[0]} ${formatCurrency(reserveToShort)}`);
@@ -6447,6 +6563,8 @@
           bucketBalances,
           refillShort,
           refillMid,
+          refillInByBucket,
+          refillOutByBucket,
           refillLabel: refillParts.length ? refillParts.join(" · ") : "Buckets already filled"
         };
       }
@@ -6686,7 +6804,8 @@
       function getDistributionBucketTotals(projection) {
         const sourceTotals = [0, 0, 0];
         const growthTotals = [0, 0, 0];
-        const refillTotals = [0, 0, 0];
+        const refillInTotals = [0, 0, 0];
+        const refillOutTotals = [0, 0, 0];
 
         projection.annualRows.forEach(row => {
           row.withdrawalsByBucket.forEach((value, index) => {
@@ -6695,11 +6814,15 @@
           row.growthByBucket.forEach((value, index) => {
             growthTotals[index] += value;
           });
-          refillTotals[0] += row.refillShort || 0;
-          refillTotals[1] += row.refillMid || 0;
+          (row.refillInByBucket || [row.refillShort || 0, row.refillMid || 0, 0]).forEach((value, index) => {
+            refillInTotals[index] += value;
+          });
+          (row.refillOutByBucket || [0, row.refillShort || 0, row.refillMid || 0]).forEach((value, index) => {
+            refillOutTotals[index] += value;
+          });
         });
 
-        return { sourceTotals, growthTotals, refillTotals };
+        return { sourceTotals, growthTotals, refillInTotals, refillOutTotals };
       }
 
       function renderDistributionIncomeRunway(projection) {
@@ -6710,7 +6833,7 @@
         const markerClass = projection.coverageComplete ? "" : " has-gap";
         const runwayTone = projection.coverageComplete ? "Funded" : coveragePercent >= 92 ? "Close" : "Short";
         const headline = projection.coverageComplete
-          ? `Income is covered through age ${formatAge(projection.inputs.planningEndAge)}.`
+          ? `Income is covered until age ${formatAge(projection.inputs.planningEndAge)}.`
           : `Income runs short after age ${formatAge(projection.coverageAge)}.`;
         const statusValue = projection.coverageComplete
           ? formatSignedCurrency(projection.surplusGap)
@@ -6800,32 +6923,6 @@
         `;
       }
 
-      function renderDistributionRefillCascade(projection) {
-        if (!els.distributionRefillCascade) return;
-        const rows = projection.annualRows;
-        if (state.charts.distributionNeed) {
-          state.charts.distributionNeed.destroy();
-          state.charts.distributionNeed = null;
-        }
-
-        els.distributionRefillCascade.innerHTML = `
-          <div class="refill-header">
-            <div>
-              <div class="refill-kicker">Rolling refill</div>
-              <h3>Components over time.</h3>
-            </div>
-            <div class="runway-status">
-              <span>Income Paid</span>
-              <strong>${formatCurrency(projection.totalFunded)}</strong>
-            </div>
-          </div>
-          <div class="refill-components">
-            <div class="chart-wrap"><canvas id="distribution-need-chart"></canvas></div>
-            <div class="chart-fallback" data-fallback="distribution-need">Charts are unavailable because Chart.js did not load. Income totals still work.</div>
-          </div>
-        `;
-      }
-
       function renderDistributionDrawdownMap(projection) {
         const rows = projection.annualRows;
         if (!rows.length) {
@@ -6835,7 +6932,7 @@
 
         const finalRow = rows[rows.length - 1];
         const firstGapRow = rows.find(row => row.gap > 0.01);
-        const { growthTotals, refillTotals } = getDistributionBucketTotals(projection);
+        const { sourceTotals, growthTotals, refillInTotals, refillOutTotals } = getDistributionBucketTotals(projection);
         const startingBuckets = projection.initialBuckets.map(bucket => bucket.startingBalance);
         const endingBuckets = finalRow.bucketEndingBalances;
 
@@ -6863,7 +6960,7 @@
           {
             label: "Projected growth",
             value: projection.totalGrowth,
-            note: "Growth earned inside Bucket 1, Bucket 2, and Bucket 3 before annual refills.",
+            note: "Monthly growth earned inside Bucket 1, Bucket 2, and Bucket 3 before quarterly refills.",
             color: "var(--gold)"
           },
           {
@@ -6890,22 +6987,20 @@
 
         const bucketCards = projection.initialBuckets.map((bucket, index) => {
           const sourceClass = ["source-short", "source-mid", "source-long"][index];
-          const primaryLedger = [
-            ["Income paid", projection.totalFunded],
-            [`Sent to ${distributionBucketLabels[0]}`, refillTotals[0]],
-            [`Sent to ${distributionBucketLabels[1]}`, refillTotals[1]]
-          ][index];
           const roleCopy = [
-            "Funds each annual withdrawal after year-end refills.",
+            "Funds each monthly paycheck after quarterly refills.",
             "Rebuilds Bucket 1 after withdrawals and keeps the next five years staged.",
             "Compounds the long-term balance and feeds Bucket 2 when needed."
           ][index];
+          const refillActivity = (refillInTotals[index] || 0) - (refillOutTotals[index] || 0);
+          const refillLabel = refillActivity >= 0 ? "Net refill in" : "Net refill sent";
           return `
             <article class="bucket-card ${sourceClass}">
               <h4>${bucket.label}</h4>
               <p>${bucket.yearsLabel}. ${roleCopy} Starts with ${formatCurrency(startingBuckets[index] || 0)} and compounds at ${formatPercent(bucket.rate)}.</p>
               <div class="bucket-ledger">
-                <div><span>${primaryLedger[0]}</span><strong>${formatCurrency(primaryLedger[1] || 0)}</strong></div>
+                <div><span>Income paid</span><strong>${formatCurrency(sourceTotals[index] || 0)}</strong></div>
+                <div><span>${refillLabel}</span><strong>${formatCurrency(Math.abs(refillActivity) || 0)}</strong></div>
                 <div><span>Growth earned</span><strong>${formatCurrency(growthTotals[index] || 0)}</strong></div>
                 <div><span>Ending balance</span><strong>${formatCurrency(endingBuckets[index] || 0)}</strong></div>
               </div>
@@ -6933,7 +7028,7 @@
             <div class="annual-path-header">
               <div>
                 <h4>Year-by-year drawdown path</h4>
-                <p>Stacked bars show how Bucket 1, Bucket 2, and Bucket 3 evolve each year. Hover or tap a year to see the income, growth, refill, gap, and ending allocation behind it.</p>
+                <p>Stacked bars show how Bucket 1, Bucket 2, and Bucket 3 evolve each year from monthly paychecks, monthly growth, and quarterly refills. Hover or tap a year to see the rollup behind it.</p>
               </div>
               <div class="annual-legend" aria-label="Bucket color legend">
                 <span><i style="--source-color:var(--teal)"></i>${distributionBucketLabels[0]}</span>
@@ -7014,7 +7109,7 @@
       function renderDistributionAnnualAgeLabels(rows) {
         return rows.map(row => {
           const showAge = row.year === 1 || row.year === rows.length || row.year % 5 === 0;
-          return `<span>${showAge ? formatAge(row.age) : ""}</span>`;
+          return `<span>${showAge ? formatAge(row.startAge ?? row.age) : ""}</span>`;
         }).join("");
       }
 
@@ -7028,8 +7123,8 @@
             const share = value <= 0 ? 0 : Math.max(3, Math.round((value / allocationTotal) * 100));
             return `<i class="annual-bar-segment" style="--share:${share}%; --bucket-color:${bucketColors[bucketIndex]}"></i>`;
           }).join("");
-          const refill = (row.refillShort || 0) + (row.refillMid || 0);
-          const tooltip = `Age ${formatAge(row.age)}: ${row.sourceLabel}; need ${formatCurrency(row.annualNeed)}; withdrawn ${formatCurrency(row.funded)}; growth ${formatCurrency(row.growth)}; refill ${formatCurrency(refill)}; ending assets ${formatCurrency(row.endingAssets)}; gap ${formatCurrency(row.gap)}`;
+          const refill = sumDistributionValues(row.refillInByBucket || [row.refillShort || 0, row.refillMid || 0, 0]);
+          const tooltip = `Age ${formatAge(row.startAge ?? row.age)}: ${row.sourceLabel}; need ${formatCurrency(row.annualNeed)}; withdrawn ${formatCurrency(row.funded)}; growth ${formatCurrency(row.growth)}; refill ${formatCurrency(refill)}; ending assets ${formatCurrency(row.endingAssets)}; gap ${formatCurrency(row.gap)}`;
 
           return `
             <button class="annual-bar ${row.gap > 0.01 ? "has-gap" : ""}${rowIndex === 0 ? " active" : ""}" type="button" data-row-index="${rowIndex}" style="--bar-height:${barHeight}%" title="${tooltip}" aria-label="${tooltip}">
@@ -7075,7 +7170,10 @@
 
       function renderDistributionAnnualDetail(row) {
         const allocationTotal = Math.max(sumDistributionValues(row.bucketEndingBalances), 1);
-        const refill = (row.refillShort || 0) + (row.refillMid || 0);
+        const refill = sumDistributionValues(row.refillInByBucket || [row.refillShort || 0, row.refillMid || 0, 0]);
+        const ageLabel = row.startAge !== undefined && !nearlyEqual(row.startAge, row.age)
+          ? `Ages ${formatAge(row.startAge)}-${formatAge(row.age)}`
+          : `Age ${formatAge(row.age)}`;
         const sourceCopy = row.gap > 0.01
           ? `${formatCurrency(row.funded)} is paid, leaving a ${formatCurrency(row.gap)} shortfall.`
           : `${formatCurrency(row.funded)} is paid from ${row.sourceLabel}.`;
@@ -7096,7 +7194,7 @@
         `).join("");
 
         return `
-          <h5><span>Year ${row.year}</span>Age ${formatAge(row.age)}</h5>
+          <h5><span>Year ${row.year}</span>${ageLabel}</h5>
           <p>${sourceCopy} ${refillCopy}</p>
           <div class="annual-detail-grid">
               <div><span>Starting assets</span><strong>${formatCurrency(row.startingBalance)}</strong></div>
@@ -7107,7 +7205,7 @@
               <div><span>Ending assets</span><strong>${formatCurrency(row.endingAssets)}</strong></div>
           </div>
           <div>
-            <span class="annual-detail-label">Year-end allocation</span>
+            <span class="annual-detail-label">Ending allocation</span>
             <div class="allocation-stack" aria-label="Year ${row.year} bucket allocation">${allocationBars}</div>
             <div class="allocation-values">${allocationValues}</div>
           </div>
@@ -7972,11 +8070,6 @@
         });
         safelyRenderChart(() => {
           if (state.distributionProjection) {
-            renderDistributionNeedChart();
-          }
-        });
-        safelyRenderChart(() => {
-          if (state.distributionProjection) {
             renderDistributionScenarioChart();
           }
         });
@@ -8164,12 +8257,12 @@
       }
 
       function renderDistributionPortfolioStackChart() {
-        const rows = state.distributionProjection.annualRows;
-        const labels = rows.map(row => formatAge(row.age));
+        const rows = getDistributionPortfolioStackRows(state.distributionProjection);
+        const labels = rows.map(row => row.label);
         const datasets = [
           {
-            label: "Cash bucket",
-            data: rows.map(row => Math.round(row.bucketEndingBalances[0] || 0)),
+            label: "Bucket 1",
+            data: rows.map(row => Math.round(getDistributionChartBucketBalances(row)[0] || 0)),
             borderColor: "#55e6c1",
             backgroundColor: "rgba(85, 230, 193, 0.24)",
             fill: true,
@@ -8181,8 +8274,8 @@
             stack: "bucketBalances"
           },
           {
-            label: "Refill bucket",
-            data: rows.map(row => Math.round(row.bucketEndingBalances[1] || 0)),
+            label: "Bucket 2",
+            data: rows.map(row => Math.round(getDistributionChartBucketBalances(row)[1] || 0)),
             borderColor: "#7ab7ff",
             backgroundColor: "rgba(122, 183, 255, 0.2)",
             fill: true,
@@ -8194,8 +8287,8 @@
             stack: "bucketBalances"
           },
           {
-            label: "Growth bucket",
-            data: rows.map(row => Math.round(row.bucketEndingBalances[2] || 0)),
+            label: "Bucket 3",
+            data: rows.map(row => Math.round(getDistributionChartBucketBalances(row)[2] || 0)),
             borderColor: "#f6c766",
             backgroundColor: "rgba(246, 199, 102, 0.22)",
             fill: true,
@@ -8211,86 +8304,82 @@
           plugins: {
             legend: { position: "bottom", labels: chartLabelStyle() },
             tooltip: readableTooltip({
-              title: items => `Age ${items[0]?.label || ""}`,
+              title: items => {
+                const row = rows[items[0]?.dataIndex];
+                if (row?.isStart) return "Starting allocation";
+                return row?.month ? `Year ${row.year}, Month ${row.monthInYear}` : `Year ${row?.year || items[0]?.label || ""}`;
+              },
               label: context => {
                 const row = rows[context.dataIndex];
                 const value = Number(context.raw) || 0;
-                const total = Math.max(sumDistributionValues(row?.bucketEndingBalances || []), 1);
+                const total = Math.max(sumDistributionValues(getDistributionChartBucketBalances(row)), 1);
                 const share = (value / total) * 100;
                 return `${context.dataset.label}: ${formatCurrency(value)} (${share.toFixed(0)}%)`;
               },
               footer: items => {
                 const row = rows[items[0]?.dataIndex];
-                return `Total left: ${formatCurrency(row?.endingAssets || 0)}`;
+                return `Total left: ${formatCurrency(getDistributionChartAssets(row))}`;
               }
             }, {
               itemSort: (a, b) => a.datasetIndex - b.datasetIndex
             })
           },
-          scales: moneyScales({ stacked: true })
-        });
-      }
-
-      function renderDistributionNeedChart() {
-        const rows = state.distributionProjection.annualRows;
-        const labels = rows.map(row => formatAge(row.age));
-        const datasets = [
-          {
-            label: "Spending need",
-            data: rows.map(row => Math.round(row.annualNeed)),
-            borderColor: "#f5f7ef",
-            backgroundColor: "rgba(245, 247, 239, 0.1)",
-            type: "line",
-            tension: 0.28,
-            pointRadius: 1.8,
-            pointHoverRadius: 4
-          },
-          {
-            label: "Refill cash",
-            data: rows.map(row => Math.round(row.refillShort || 0)),
-            backgroundColor: "rgba(85, 230, 193, 0.84)",
-            stack: "components"
-          },
-          {
-            label: "Refill reserve",
-            data: rows.map(row => Math.round(row.refillMid || 0)),
-            backgroundColor: "rgba(122, 183, 255, 0.84)",
-            stack: "components"
-          },
-          {
-            label: "Growth added",
-            data: rows.map(row => Math.round(row.growth || 0)),
-            backgroundColor: "rgba(246, 199, 102, 0.86)",
-            stack: "components"
-          },
-          {
-            label: "Shortfall",
-            data: rows.map(row => Math.round(row.gap)),
-            backgroundColor: "rgba(255, 121, 104, 0.86)",
-            stack: "components"
-          }
-        ];
-        state.charts.distributionNeed = upsertChart("distribution-need-chart", state.charts.distributionNeed, "bar", labels, datasets, {
-          plugins: {
-            legend: { position: "bottom", labels: chartLabelStyle() },
-            tooltip: readableTooltip({
-              title: items => `Age ${items[0]?.label || ""}`,
-              label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
-              footer: items => {
-                const row = rows[items[0]?.dataIndex];
-                return `Total left: ${formatCurrency(row?.endingAssets || 0)}`;
-              }
-            })
-          },
           scales: {
-            x: { stacked: true, grid: { display: false }, ticks: { color: "#9aa7a6", maxRotation: 0 } },
-            y: {
-              stacked: true,
-              ticks: { color: "#9aa7a6", callback: value => compactCurrency(value) },
-              grid: { color: "rgba(245, 247, 239, 0.1)" }
+            ...moneyScales({ stacked: true }),
+            x: {
+              ...moneyScales({ stacked: true }).x,
+              ticks: {
+                color: "#9aa7a6",
+                maxRotation: 50,
+                callback: (value, index) => rows[index]?.axisLabel || ""
+              }
             }
           }
         });
+      }
+
+      function getDistributionPortfolioStackRows(projection) {
+        const monthlyRows = projection.monthlyRows || [];
+        if (!monthlyRows.length) {
+          return projection.annualRows.map(row => ({
+            ...row,
+            label: formatAge(row.age),
+            axisLabel: formatAge(row.age)
+          }));
+        }
+
+        const startAge = projection.inputs.currentAge;
+        return [
+          {
+            isStart: true,
+            age: startAge,
+            label: formatAge(startAge),
+            axisLabel: formatAge(startAge),
+            bucketEndingBalances: projection.initialBuckets.map(bucket => bucket.startingBalance),
+            bucketChartBalances: projection.initialBuckets.map(bucket => bucket.startingBalance),
+            endingAssets: projection.startingAssets,
+            chartAssets: projection.startingAssets
+          },
+          ...monthlyRows.map(row => {
+            const wholeAge = Math.round(row.age);
+            const isWholeAge = Math.abs(row.age - wholeAge) < 0.0001;
+            return {
+              ...row,
+              label: `M${row.month}`,
+              axisLabel: isWholeAge ? formatAge(wholeAge) : "",
+              bucketChartBalances: row.bucketStartingBalances,
+              chartAssets: row.startingBalance
+            };
+          })
+        ];
+      }
+
+      function getDistributionChartBucketBalances(row) {
+        return row?.bucketChartBalances || row?.bucketEndingBalances || [0, 0, 0];
+      }
+
+      function getDistributionChartAssets(row) {
+        return row?.chartAssets ?? row?.endingAssets ?? sumDistributionValues(getDistributionChartBucketBalances(row));
       }
 
       function renderDistributionScenarioChart() {
@@ -8553,17 +8642,19 @@
           retirementAssets: 0,
           rothAssets: 0
         });
-        assert(nearlyEqual(zeroDistribution.totalNeed, 3000), "Zero inflation annual distribution need should equal annual withdrawal times years.");
-        assert(nearlyEqual(zeroDistribution.totalFunded, 3000), "Zero return drawdown should fund exact withdrawals from the seeded buckets.");
+        assert(nearlyEqual(zeroDistribution.totalNeed, 3000), "Zero inflation distribution need should equal annual withdrawal times years.");
+        assert(nearlyEqual(zeroDistribution.totalFunded, 3000), "Zero return monthly drawdown should fund exact withdrawals from the seeded buckets.");
         assert(nearlyEqual(zeroDistribution.initialBuckets[0].startingBalance, 2000), "Bucket 1 should seed the first two years of need.");
         assert(nearlyEqual(zeroDistribution.initialBuckets[1].startingBalance, 1000), "Bucket 2 should seed the next years of need when assets are limited.");
+        assert(zeroDistribution.monthlyRows.length === 36, "Three distribution years should produce 36 monthly drawdown rows.");
         assert(nearlyEqual(zeroDistribution.annualRows[0].startingBalance, 3000), "Year 1 should start from the full portfolio total.");
-        assert(nearlyEqual(zeroDistribution.annualRows[0].withdrawalsByBucket[0], 1000), "Year 1 should withdraw from Bucket 1 first.");
-        assert(nearlyEqual(zeroDistribution.annualRows[0].bucketAfterWithdrawalBalances[0], 1000), "Year 1 should leave one year of need in Bucket 1 after withdrawal.");
+        assert(nearlyEqual(zeroDistribution.monthlyRows[0].funded, 1000 / 12), "Month 1 should pay one monthly paycheck.");
+        assert(nearlyEqual(zeroDistribution.monthlyRows[0].withdrawalsByBucket[0], 1000 / 12), "Month 1 should withdraw from Bucket 1 first.");
+        assert(nearlyEqual(zeroDistribution.annualRows[0].withdrawalsByBucket[0], 1000), "Year 1 should withdraw twelve paychecks from Bucket 1.");
         assert(nearlyEqual(zeroDistribution.annualRows[0].endingAssets, 2000), "Zero return should leave the post-withdrawal bucket balances unchanged.");
-        assert(nearlyEqual(zeroDistribution.annualRows[0].bucketEndingBalances[0], 2000), "Year-end reset should refill Bucket 1 with the remaining two years of need.");
-        assert(nearlyEqual(zeroDistribution.annualRows[0].bucketEndingBalances[1], 0), "No assets should remain for Bucket 2 after the year-one refill.");
-        assert(zeroDistribution.annualRows[2].sourceLabel === "Bucket 1", "Rolling resets should refill Bucket 1 so year 3 can still draw from it.");
+        assert(nearlyEqual(sumDistributionValues(zeroDistribution.annualRows[0].bucketEndingBalances), zeroDistribution.annualRows[0].endingAssets), "Annual ending buckets should tie to ending assets.");
+        assert(zeroDistribution.annualRows[0].refillShort > 0, "Quarterly resets should refill Bucket 1 during the year.");
+        assert(zeroDistribution.annualRows[2].sourceLabel === "Bucket 1", "Quarterly resets should refill Bucket 1 so year 3 can still draw from it.");
 
         const inflatedDistribution = calculateDistributionProjection({
           ...distributionDefaults,
@@ -8592,14 +8683,12 @@
         assert(nearlyEqual(bucketRouting.initialBuckets[0].startingBalance, 200), "Bucket 1 should hold the first two years of annual need.");
         assert(nearlyEqual(bucketRouting.initialBuckets[1].startingBalance, 500), "Bucket 2 should hold the next five years of annual need.");
         assert(nearlyEqual(bucketRouting.initialBuckets[2].startingBalance, 300), "Bucket 3 should receive all remaining assets.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].growthByBucket[0], 100 * 0.04), "Bucket 1 should grow on its remaining balance after the withdrawal.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].growthByBucket[1], 500 * 0.08), "Bucket 2 should compound independently.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].growthByBucket[2], 300 * 0.12), "Bucket 3 should compound independently.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[0], 200), "Rolling reset should refill Bucket 1 back to the next two years of need.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[1], 500), "Rolling reset should preserve the Bucket 2 target when assets are sufficient.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].bucketEndingBalances[2], 280), "Rolling reset should leave the remaining assets in Bucket 3.");
-        assert(nearlyEqual(bucketRouting.annualRows[0].refillMid, 56), "Bucket 3 should refill Bucket 2 after Bucket 2 sends cash to Bucket 1.");
-        assert(bucketRouting.annualRows[0].refillLabel.includes("Bucket 3 -> Bucket 2"), "Refill labels should explain the reserve-bucket top-up.");
+        assert(nearlyEqual(bucketRouting.monthlyRows[0].growthByBucket[0], 200 * (Math.pow(1.04, 1 / 12) - 1)), "Bucket 1 should grow monthly before the paycheck withdrawal.");
+        assert(nearlyEqual(bucketRouting.monthlyRows[0].growthByBucket[1], 500 * (Math.pow(1.08, 1 / 12) - 1)), "Bucket 2 should compound monthly and independently.");
+        assert(nearlyEqual(bucketRouting.monthlyRows[0].growthByBucket[2], 300 * (Math.pow(1.12, 1 / 12) - 1)), "Bucket 3 should compound monthly and independently.");
+        assert(nearlyEqual(sumDistributionValues(bucketRouting.annualRows[0].bucketEndingBalances), bucketRouting.annualRows[0].endingAssets), "Rolling monthly bucket balances should tie to annual ending assets.");
+        assert(bucketRouting.annualRows[0].refillShort > 0, "Quarterly reset should refill Bucket 1 from longer buckets.");
+        assert(bucketRouting.annualRows[0].refillLabel.includes("Bucket 2 -> Bucket 1") || bucketRouting.annualRows[0].refillLabel.includes("Bucket 3 -> Bucket 1"), "Refill labels should explain the quarterly Bucket 1 top-up.");
         assert(bucketRouting.annualRows[1].sourceLabel === "Bucket 1", "Year 2 should still draw from the refilled Bucket 1.");
 
         const rollingRefill = calculateDistributionProjection({
@@ -8613,9 +8702,33 @@
           retirementAssets: 0,
           rothAssets: 0
         });
-        assert(nearlyEqual(rollingRefill.annualRows[0].refillShort, 96), "Year-end reset should move growth back into Bucket 1.");
-        assert(nearlyEqual(rollingRefill.annualRows[0].refillMid, 0), "Bucket 2 should not need refill when already at target.");
-        assert(rollingRefill.annualRows[0].refillLabel.includes("Bucket 2 -> Bucket 1"), "Refill labels should explain the short-bucket top-up.");
+        assert(rollingRefill.annualRows[0].refillShort > 0, "Quarterly reset should move longer-bucket assets back into Bucket 1.");
+        assert(rollingRefill.annualRows[0].refillLabel.includes("Bucket 2 -> Bucket 1") || rollingRefill.annualRows[0].refillLabel.includes("Bucket 3 -> Bucket 1"), "Refill labels should explain the short-bucket top-up.");
+
+        const sensitivityBaseInputs = {
+          ...distributionDefaults,
+          currentAge: 70,
+          planningEndAge: 73,
+          withdrawalAmount: 1000,
+          withdrawalCadence: "annual",
+          inflationRate: 2,
+          bucket1Return: 4,
+          bucket2Return: 8,
+          bucket3Return: 12,
+          taxableAssets: 100000,
+          retirementAssets: 0,
+          rothAssets: 0
+        };
+        const sensitivityInputs = buildDistributionSensitivityInputs(sensitivityBaseInputs, {
+          spending: 10,
+          inflation: 1,
+          returns: -1
+        });
+        const sensitivityProjection = calculateDistributionProjection(sensitivityInputs);
+        assert(nearlyEqual(sensitivityInputs.withdrawalAmount, 1100), "Distribution sensitivity spending should adjust the withdrawal amount before projection.");
+        assert(nearlyEqual(sensitivityInputs.inflationRate, 3), "Distribution sensitivity inflation should adjust annual need inflation before monthly needs are derived.");
+        assert(nearlyEqual(sensitivityProjection.monthlyReturns[0], Math.pow(1.03, 1 / 12) - 1), "Distribution sensitivity return changes should flow into monthly bucket returns.");
+        assert(sensitivityProjection.monthlyRows.length === 36, "Distribution sensitivity projections should use the monthly drawdown model.");
 
         const gapDistribution = calculateDistributionProjection({
           ...distributionDefaults,
